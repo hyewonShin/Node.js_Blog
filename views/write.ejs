@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+ function post_border() {
+    //현재 시각 저장할 변수
+    let date = new Date()
+    let borderDate = date.getTime()
+    $.ajax({
+      type: "POST",
+      url: `/api/blogList`,
+      dataType : "json",
+      data: {
+        //post 보낼 데이터
+        subject: $("#subject").val(),
+        nick: $("#nick").val(),
+        password: $("#password").val(),
+        content: $("#content").val(),
+        borderDate
+      },
+      success: function (response) {
+        if (response['result'] == "success") {
+          alert("글이 등록 되었습니다.");
+          window.location.href="/api/list"
+        }
+      }
+    });
+  }
+</script>
+</head>
+<body>
+ <!-- <form action="/api/blogList" method="post"> -->
+        <label>글 제목</label>
+        <input type="text" id="subject" name="subject"></br>
+        <label>작성자명</label>
+        <input type="text" id="nick" name="nick"></br>
+        <label>비밀번호</label>
+        <input type="text" id="password" name="password"></br>
+        <label>작성 내용</label>
+        <input type="textarea" id="content" name="content"></br>
+        <button onclick="post_border();" onclick="location.href='list.ejs'">글쓰기</button>
+     <!-- </form> -->
+</body>
+
+</html>

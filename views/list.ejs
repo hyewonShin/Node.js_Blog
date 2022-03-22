@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<style>
+  
+
+</style>
+<script>
+    $(document).ready(function () {
+        get_borders()
+        make_list();
+    });
+
+    function get_borders() {
+        //$("#list-box").empty()
+        $.ajax({
+            type: "GET",
+            url: `/api/blogList`,
+            data: {},
+            dataType: "json",
+            success: function (response) {
+                 let blogList = response["blogList"]
+                 //console.log(blogList[2]["subject"])
+                
+                const subject = "<%= blogList[subject]%>"
+
+                 
+
+                //  for (let i = 0; i < blogList.length; i++) {
+                //         let subject = blogList[i]['subject']
+                //         let nick = blogList[i]['nick']
+                //         let password = blogList[i]['password']
+                //         let borderDate = blogList[i]['borderDate']
+                //     }
+
+                 //   console.log(blogList[2]["subject"])
+
+                //  for (let i = 0; i < blogList.length; i++) {
+                //     let subject = blogList[i]["subject"]
+                //     let nick = blogList[i]["nick"]
+                //     let password = blogList[i]["password"]
+                //     let borderDate = blogList[i]["borderDate"]
+                //  }
+    
+               // 우선 값 들어오는거 확인하고 사용하기 // 값이 넘어오지 않음 
+                // for (let i = 0; i < blogList.length; i++) {
+                //     let date = moment(blogList[i]['borderDate']).format('YYYY-MM-DD HH:mm')
+                //     console.log(date)
+
+                //     make_list(blogList[i], date)
+                    
+                // }
+            }
+        })
+    }
+    function make_list(blogList) {
+        let htmlTemp = ` <% for(var i = 0; blogList.length<5; i++){ %>
+                            <tr>
+                                <td><%= blogList[i].title %></td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                            </tr>
+                        <% } %>`
+        $("#list-box").append(htmlTemp)
+    }
+    // function correct(borderDate) {
+    //     location.href = "/borderCorrect"
+    // }
+
+</script>
+
+<body>
+    <div id="list-box">
+            <td>글제목1</td>
+            <td>작성자명1</td>
+            <td>${date}</td>
+    </div>
+</body>
+
+</html>
+
+<!-- `<tr>
+    <td><a href='/borderDetail?borderDate=${borders["borderDate"]}'>${borders["borderTitle"]}</a></td>
+    <td>${borders["borderUserNick"]}</td>
+    <td>${date}</td>
+</tr>` -->
