@@ -1,5 +1,5 @@
-Node.js
-mongoDB
+Node.js,
+mongoDB.
 express
 사용하여 개인블로그 만들기
 - 글작성
