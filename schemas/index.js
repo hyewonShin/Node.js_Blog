@@ -3,7 +3,7 @@ const mongoose = require("mongoose"); //express.js 대신 사용
 
 //mongoose 연결 
 const connect = () => {
-    mongoose.connect("비밀")
+    mongoose.connect("mongodb+srv://test:1234@cluster0.uwzfe.mongodb.net/Cluster0?retryWrites=true&w=majority")
     .then(() => console.log('MongoDB conected'))
     .catch((err)=>{
         console.error(err);  
