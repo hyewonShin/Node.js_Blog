@@ -61,4 +61,26 @@ server.listen(port, hostname, () => {
 
 
 
+// REST API 
+// - routes 주소 : /blog
+
+// 1) 글작성 페이지 /write
+// - 글쓰기버튼 함수  post_write()
+
+// 2) 글목록 페이지 /list
+// - 글목록 불러오는 함수 get_detail()
+// - 글목록 html추가 함수 make_list()
+
+// 3) 글상세 페이지 /list_Detail
+// - 수정화면으로 가는 버튼 modify_detail()
+// - 삭제 유효성검사 버튼 remove_validation()
+
+// 4) 글수정 페이지 /modify
+// - 수정 유효성검사 함수 modify_validation()
+// - 수정함수 modify()
+
+
+
+
+
 

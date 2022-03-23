@@ -25,8 +25,8 @@ router.get('/list_Detail', async(req, res) => {
 })
 
 //수정 페이지
-router.get('/blogCorrect', async(req, res) => {
-  res.render('blogCorrect');
+router.get('/modify', async(req, res) => {
+  res.render('modify');
 })
 
 
