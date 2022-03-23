@@ -1,61 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 </head>
 <style>
   div {
-        border: 1px;
+    border: 1px;
   }
-
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script>
-    $(document).ready(function () {
-        get_borders_detail()
-        make_list_detail();
+  //주소에 있는 정보 가져올때 사용
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const borderDate = urlParams.get("borderDate");
+
+  $(document).ready(function () {
+    get_detail()
+  });
+  function get_detail() {
+    $.ajax({
+      type: "GET",
+      url: `blogList/${borderDate}`,
+      data: {},
+      success: function (response) {
+        let blogList = response["blogList"];
+        let dateDetail = blogList['borderDate']
+        //db에 저장된 date moment 포맷으로 변경
+        let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
+        // console.log(blogList)
+        //console.log(date)
+        $("#subject").text(blogList["subject"]);
+        $("#nick").text(blogList["nick"]);
+        $("#borderDate").text(date);
+        $("#content").text(blogList["content"]);
+      }
     });
+  }
+  //수정 버튼 누를 시 correct에 불러온 bordersDetail를 가져오고 그중 borderDate를 불러온다.
+  //이후 파라미터 값으로 가져온다.
+  function correct(bordersDetail) {
+    location.href = "blogCorrect?borderDate=" + borderDate
+  }
 
-    function get_borders_detail() {
-        $.ajax({
-            type: "GET",
-            url: `/api/list_Detail`,
-            data: {},
-            dataType: "json",
-            success: function (response) {
-                //routes에서 보내준 값 받음. 
-                 let blogList = response["blogList"]
-               
-                 for (let i = 0; i < blogList.length; i++) {
-                     let date = moment(blogList[i]['borderDate']).format('YYYY-MM-DD HH:mm')
-                     make_list(blogList[i], date)
-                 }
-            }
-        })
-    }
-    function make_list_detail(blog, date) {
-        let htmlTemp = `<tr>
-                            <td>${blog["subject"]}</a></td>
-                            <td>${blog["nick"]}</td>
-                            <td>${date}</td>
-                            <td>${blog["content"]}</td>
-                        </tr>`
-        $("#list-box_detail").append(htmlTemp)
-    }
-    // function correct(borderDate) {
-    //     location.href = "/borderCorrect"
-    // }
+  //삭제 버튼 클릭시 모달 스타트
+  function modal_start() {
+    $('#cartModal').modal('show');
+  }
 
+  function modal_ok() {
+    $.ajax({
+      type: "GET",
+      url: `api/borderList/${borderDate}`,
+      data: {},
+      success: function (response) {
+        let bordersInfo = response["detail"];
+        //db에 저장된 비밀번호 가져오기
+        let pwd = bordersInfo['borderPwd']
+        //비밀번호 입력창에 입력한 값과 db로 가져온 pwd를 비교하여 검사
+        if (pwd === $(borderPwd).val()) {
+          remove()
+        }
+        else {
+          alert("비밀번호가 다릅니다.");
+        }
+      }
+    });
+  }
+
+  function remove() {
+    $.ajax({
+      type: "DELETE",
+      url: `/api/borderList/${borderDate}`,
+      data: {},
+      success: function (response) {
+        if (response["result"] == "success") {
+          location.href = "/borderList"
+        }
+      }
+    });
+  }
 </script>
 
 <body>
-    <div id="list-box_detail" name="list-box">
+  <h1>게시판</h1>
+  <div class="form-group">
+    제목 : <label id="subject"></label></br>
+       작성자명 : <label id="nick"></label></br>
+       작성날짜 : <label id="borderDate"></label></br>
+       내용 : <label id="content"></label></br>
+    <div class="btncls">
+      <button class="btn btn-primary" type="submit" onclick="correct()">수정</button>
+      <button class="btn btn-primary" type="submit" onclick="modal_start()">삭제</button>
     </div>
+    <div class="modal-body">
+      비밀번호를 입력하세요
+    </div>
+    <input class="inputPwd" id="borderPwd" type="number" placeholder="숫자를 입력하세요" />
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sparta" onclick='modal_ok()'>
+        확인
+      </button>
+      <button type="button" class="btn btn-outline-sparta" data-dismiss="modal">
+        취소
+      </button>
+    </div>
+  </div>
 </body>
 
 </html>
-

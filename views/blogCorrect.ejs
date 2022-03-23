@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    div {
+        border: 1px;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script>
+    //주소에 있는 정보 가져올때 사용
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const borderDate = urlParams.get("borderDate");
+
+    $(document).ready(function () {
+        get_detail()
+    })
+    //상세페이지 정보
+    //a 태그로 들어온 정보를 주소에 파라미터 값으로 넣어서 ajax콜을 함.
+    function get_detail() {
+        $.ajax({
+            type: "GET",
+            url: `blogList/${borderDate}`,
+            data: {},
+            success: function (response) {
+                let blogList = response["blogList"];
+                //console.log(blogList) //값 넘어옴
+                //시간 표시를 이쁘게 하기위해서 변수에 지정해줌
+                let dateDetail = blogList['borderDate'];
+                let password= blogList['password'];
+                let subject= blogList['subject'];
+                let nick= blogList['nick'];
+                let content= blogList['content'];
+
+                //시간이 저장된 변수에 date moment 포맷으로 변경
+                let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
+               // console.log(blogList)
+                console.log(date)
+
+                $("#subject").text(blogList["subject"]);
+                $("#nick").text(blogList["nick"]);
+                $("#borderDate").text(date);
+                $("#content").text(blogList["content"]);
+            }
+        });
+    }
+
+    // //글 수정 전 비밀번호 확인을 위해 모달창 이용
+    // function modal_start() {
+    //     $('#cartModal').modal('show');
+    // }
+
+    // //get_detail() 함수에서 가져온 비밀번호를 서로 비교 하려 했으나, 능력부족으로 인해
+    // // 새로 ajax콜을 하여 값을 가져옴
+    // function modal_ok() {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: `borderList/${borderDate}`,
+    //         data: {},
+    //         success: function (response) {
+    //             let blogList = response["blogList"];
+    //             //db에 저장된 비밀번호 가져오기
+    //             let pwd = blogList['password']
+    //             //비밀번호 입력창에 입력한 값과 db로 가져온 pwd를 비교하여 검사
+    //             if (pwd === $(password).val()) {
+    //                 correct()
+    //             }
+    //             else {
+    //                 alert("비밀번호가 다릅니다.");
+    //             }
+    //         }
+    //     });
+    // }
+
+    // // 글을 수정하면서 date 값도 바꾸려고 했으나, date값은 api get할 시 필요한 데이터이기도 하고, 서버와의 연결도 date로 하기 때문에 변경 안함.
+    // function correct() {
+    //     $.ajax({
+    //         type: "PATCH",
+    //         url: `borderList/${borderDate}`,
+    //         data: {
+    //             //바뀐 데이터
+    //             subject: $(subject).val(),
+    //             nick: $(nick).val(),
+    //             content: $(content).val(),
+    //         },
+    //         success: function (response) {
+    //             if (response["result"] == "success") {
+    //                 alert("글이 등록 되었습니다.");
+    //                 window.location.href = "/borderList"
+    //             }
+    //         }
+    //     });
+    // }
+    //취소 버튼 시 뒤로가기 기능
+    function back() {
+        location.href = 'javascript:history.back();'
+    }
+</script>
+
+<body>
+    <h1>게시판</h1>
+    <div class="form-group">
+        <div class="label">
+            <label for="exampleFormControlInput1" style="font-weight: bold;">제목 : </label>
+            <input id="subject"></label>
+        </div>
+        <div class="label">
+            <label for="exampleFormControlInput1" style="font-weight: bold;">작성자명 : </label>
+            <input id="nick"></label>
+        </div>
+        <div class="label">
+            <label for="exampleFormControlInput1" style="font-weight: bold;">작성했던 날짜 : </label>
+            <label id="borderDate"></label>
+        </div>
+        <div class="label">
+            <label for="exampleFormControlInput1">내용</label>
+            <textarea class="form-control" id="content" type="text" rows="10"></textarea>
+        </div>
+        <div class="btncls">
+            <button class="btn btn-primary" type="submit" onclick="modal_start()">수정 완료</button>
+            <button class="btn btn-primary" type="submit" onclick="back()">취소</button>
+        </div>
+        <div class="modal text-left" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cartModalLabel">알림</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        비밀번호를 입력하세요
+                    </div>
+                    <input class="inputPwd" id="borderPwd" type="number" placeholder="숫자를 입력하세요" />
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sparta" onclick='modal_ok()'>
+                            확인
+                        </button>
+                        <button type="button" class="btn btn-outline-sparta" data-dismiss="modal">
+                            취소
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

@@ -25,7 +25,7 @@
     function get_borders() {
         $.ajax({
             type: "GET",
-            url: `/api/blogList`,
+            url: `blogList`,
             data: {},
             dataType: "json",
             success: function (response) {
@@ -41,20 +41,21 @@
     }
     function make_list(blog, date) {
         let htmlTemp = `<tr>
-                            <td>${blog["subject"]}</a></td>
+                            <td><a href='list_Detail?borderDate=${blog["borderDate"]}'>${blog["subject"]}</a></td>
                             <td>${blog["nick"]}</td>
                             <td>${date}</td>
                         </tr>`
         $("#list-box").append(htmlTemp)
     }
-    // function correct(borderDate) {
-    //     location.href = "/borderCorrect"
-    // }
+    function correct(borderDate) {
+        location.href = "/blogCorrect"
+    }
 
 </script>
 
 <body>
     <div id="list-box" name="list-box">
+        <h1>글목록 페이지</h1>
     </div>
 </body>
 
