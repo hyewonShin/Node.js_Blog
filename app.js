@@ -39,9 +39,7 @@ app.use(express.json());
 app.use(requestMiddleware);
 
 
-
-
-app.use("/api", blogRouter); //요청이 맞을때 goodRouter페이지를 반환한다.
+app.use("/blog", blogRouter); //요청이 맞을때 goodRouter페이지를 반환한다.
 // get메서드와 주소가 같을 시, 미들웨어 응답이 가로채서 먼저 나오게 된다.
 // express에서는 라우터를 미들웨어로 처리한다.
 

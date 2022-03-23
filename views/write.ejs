@@ -15,7 +15,7 @@
     let borderDate = date.getTime()
     $.ajax({
       type: "POST",
-      url: `/api/blogList`,
+      url: `/blog/blogList`,
       dataType : "json",
       data: {
         //post 보낼 데이터
@@ -28,7 +28,7 @@
       success: function (response) {
         if (response['result'] == "success") {
           alert("글이 등록 되었습니다.");
-          window.location.href="/api/list"
+          window.location.href="/blog/list"
         }
       }
     });
@@ -45,7 +45,6 @@
         <label>작성 내용</label>
         <input type="textarea" id="content" name="content"></br>
         <button onclick="post_border();" >글쓰기</button>
-        <!-- // onclick="location.href='list.ejs'" -->
 </body>
 
 </html>

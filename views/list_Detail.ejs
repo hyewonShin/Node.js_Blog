@@ -8,9 +8,6 @@
   <title>Document</title>
 </head>
 <style>
-  div {
-    border: 1px;
-  }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -42,7 +39,7 @@
       }
     });
   }
-  
+
   //수정 버튼 누를 시 correct에 불러온 bordersDetail를 가져오고 그중 borderDate를 불러온다.
   //이후 파라미터 값으로 가져온다.
   function correct(blogList) {
@@ -78,7 +75,7 @@
       data: {},
       success: function (response) {
         if (response["result"] == "success") {
-          location.href = "/api/list"
+          location.href = "/blog/list"
         }
       }
     });
@@ -88,77 +85,21 @@
 <body>
   <h1>게시판</h1>
   <div class="form-group">
-       제목 : <label id="subject"></label></br>
-       작성자명 : <label id="nick"></label></br>
-       작성날짜 : <label id="borderDate"></label></br>
-       내용 : <label id="content"></label></br>
+    제목 : <label id="subject"></label></br>
+    작성자명 : <label id="nick"></label></br>
+    작성날짜 : <label id="borderDate"></label></br>
+    내용 : <label id="content"></label></br>
     <div class="btncls">
       <button class="btn btn-primary" type="submit" onclick="correct()">수정</button>
       <button class="btn btn-primary" type="submit" onclick="modal_ok()">삭제</button>
     </div>
-    <div class="modal-body">
-      비밀번호를 입력하세요
-    </div>
+      <a></a>비밀번호를 입력하세요</a></br>
     <input class="inputPwd" id="password" type="number" placeholder="숫자를 입력하세요" />
-    <!-- <div class="modal-footer">
-     <button type="button" class="btn btn-sparta" onclick='modal_ok()'>
-        확인
-      </button>
-      <button type="button" class="btn btn-outline-sparta" data-dismiss="modal">
-        취소
-      </button>
-   </div> -->
   </div>
 </body>
 
 
-  <!-- <h1>샘플 게시판</h1>
-  <div class="form-group">
-    <div class="label">
-      <label for="exampleFormControlInput1" style="font-weight: bold;">제목 :</label>
-      <label id="subject"></label>
-    </div>
-    <div class="label">
-      <label for="exampleFormControlInput1" style="font-weight: bold;">작성자 :</label>
-      <label id="nick"></label>
-    </div>
-    <div class="label">
-      <label for="exampleFormControlInput1" style="font-weight: bold;">작성 날짜 : </label>
-      <label id="borderDate"></label>
-    </div>
-    <div class="label">
-      <label for="exampleFormControlInput1">내용</label>
-      <textarea class="form-control" id="content" type="text" rows="10" readonly></textarea>
-    </div>
-  </div>
-  <div class="btncls">
-    <button class="btn btn-primary" type="submit" onclick="correct()">수정</button>
-    <button class="btn btn-primary" type="submit" onclick="modal_start()">삭제</button>
-  </div>
-  </div>
-  <div class="modal text-left" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          </button>
-        </div>
-        <div class="modal-body">
-          비밀번호를 입력하세요
-        </div>
-        <input class="inputPwd" id="borderPwd" type="number" placeholder="숫자를 입력하세요" />
-        <div class="modal-footer">
-          <button type="button" class="btn btn-sparta" onclick='modal_ok()'>
-            확인
-          </button>
-          <button type="button" class="btn btn-outline-sparta" data-dismiss="modal">
-            취소
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</body> -->
+
 
 
 </html>
