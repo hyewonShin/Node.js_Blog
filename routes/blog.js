@@ -9,14 +9,19 @@ router.get("/", (req, res) => {
 });
 
 
-//글작성목록조회
+//게시글 작성목록조회
 router.get('/list', (req, res) => {
   res.render('list');
 })
 
-//글작성 페이지  
+//게시글 작성 페이지  
 router.get('/write', async(req, res) => {
   res.render('write');
+})
+
+//게시글 상세 조회 
+router.get('/list_Detail', async(req, res) => {
+  res.render('list_Detail');
 })
 
 
@@ -24,20 +29,27 @@ router.get('/write', async(req, res) => {
 // 게시글 목록 조회
 router.get("/blogList", async (req, res, next) => {
 
-    const blogList = await Blog.find();
-    //res.json({ blogList: blogList });  //되는 코드 
-    
-    res.render({blogList : {blogList}});
+  try {
+    const blogList = await Blog.find({}).sort("-borderDate");
+    res.json({ blogList: blogList });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  } 
+}); 
 
-  // try {
-  //   const { borderDate } = req.query;
-  //   console.log(borderDate);
-  //   const blogList = await Blog.find({ borderDate }).sort("-borderDate");
-  //   res.json({ blogList: blogList });
-  // } catch (err) {
-  //   console.error(err);
-  //   next(err);
-  // } 
+
+
+// 게시글 상세조회 페이지 
+router.get("/list_Detail", async (req, res, next) => {
+
+  try {
+    const blogList = await Blog.find({}).sort("-borderDate");
+    res.json({ blogList: blogList });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  } 
 }); 
 
 
@@ -46,8 +58,8 @@ router.get("/blogList", async (req, res, next) => {
 router.post('/blogList', async (req, res) => {
   //작성한 정보 가져옴
   const { borderDate, subject, nick, password, content } = req.body;
-
   console.log(borderDate, subject, nick, password, content);
+
 
   //유효성 검사
   isExist = await Blog.find({ borderDate });
@@ -56,6 +68,7 @@ router.post('/blogList', async (req, res) => {
   }
   res.send({ result: "success" });
 });
+
 
 
 

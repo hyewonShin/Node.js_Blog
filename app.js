@@ -4,6 +4,10 @@ const app = express();
 const ejs = require('ejs');
 const connect = require("./schemas");
 
+const moment = require('moment');
+const today = moment();
+console.log(today.format());
+
 
 const port = 7000;
 connect();

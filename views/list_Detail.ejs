@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+  div {
+        border: 1px;
+  }
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script>
+    $(document).ready(function () {
+        get_borders_detail()
+        make_list_detail();
+    });
+
+    function get_borders_detail() {
+        $.ajax({
+            type: "GET",
+            url: `/api/list_Detail`,
+            data: {},
+            dataType: "json",
+            success: function (response) {
+                //routes에서 보내준 값 받음. 
+                 let blogList = response["blogList"]
+               
+                 for (let i = 0; i < blogList.length; i++) {
+                     let date = moment(blogList[i]['borderDate']).format('YYYY-MM-DD HH:mm')
+                     make_list(blogList[i], date)
+                 }
+            }
+        })
+    }
+    function make_list_detail(blog, date) {
+        let htmlTemp = `<tr>
+                            <td>${blog["subject"]}</a></td>
+                            <td>${blog["nick"]}</td>
+                            <td>${date}</td>
+                            <td>${blog["content"]}</td>
+                        </tr>`
+        $("#list-box_detail").append(htmlTemp)
+    }
+    // function correct(borderDate) {
+    //     location.href = "/borderCorrect"
+    // }
+
+</script>
+
+<body>
+    <div id="list-box_detail" name="list-box">
+    </div>
+</body>
+
+</html>
+
