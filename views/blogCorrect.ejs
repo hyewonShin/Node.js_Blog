@@ -33,7 +33,7 @@
             data: {},
             success: function (response) {
                 let blogList = response["blogList"];
-                //console.log(blogList) //값 넘어옴
+                console.log(blogList) //값 넘어옴
                 //시간 표시를 이쁘게 하기위해서 변수에 지정해줌
                 let dateDetail = blogList['borderDate'];
                 let password = blogList['password'];
@@ -45,6 +45,7 @@
                 let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
                 // console.log(blogList)
                 console.log(date)
+
 
                 $("#subject").text(blogList["subject"]);
                 $("#nick").text(blogList["nick"]);
@@ -70,10 +71,10 @@
                 let blogList = response["blogList"];
                 //db에 저장된 비밀번호 가져오기
                 let password = blogList['password']
-                console.log(password) //db저장된 비밀번호 출력됌 
+               // console.log(password) //db저장된 비밀번호 출력됌 
 
                 //비밀번호 입력창에 입력한 값과 db로 가져온 password를 비교하여 검사
-                if (password === $("password").val()) {
+                if (password === Number($("#password").val())) {
                     //console.log($("#password").val())
                     correct()
                 }
@@ -98,7 +99,7 @@
             success: function (response) {
                 if (response["result"] == "success") {
                     alert("글이 등록 되었습니다.");
-                    window.location.href = "/list"
+                    window.location.href = "/api/list"
                 }
             }
         });
@@ -114,7 +115,7 @@
     <div class="form-group">
         <div class="label">
             <label for="exampleFormControlInput1" style="font-weight: bold;">제목 : </label>
-            <input id="subject"></label>
+            <input id="subject" name="subject"></label>
         </div>
         <div class="label">
             <label for="exampleFormControlInput1" style="font-weight: bold;">작성자명 : </label>
@@ -128,11 +129,12 @@
             <label for="exampleFormControlInput1">내용</label>
             <textarea class="form-control" id="content" type="text" rows="10"></textarea>
         </div>
-        <form class="label">
+        <div class="label">
+            <!-- 값을 string으로 받아서 넣어주기때문에 비교할때는 Number타입으로 바꿔줘야됌. -->
             비밀번호 : <input type="password" id="password" name="password" />
             <button onclick='modal_ok()'>확인</button>
             <button onclick="back()">취소</button>
-        </form>
+        </div>
     </div>
 </body>
 

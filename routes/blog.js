@@ -47,7 +47,7 @@ router.get("/blogList", async (req, res, next) => {
 router.get("/blogList/:borderDate", async (req, res) => {
   //주소에 borderDate가 파라미터값으로 가져옴
   const { borderDate } = req.params;
-  blogList = await Blog.findOne({ borderDate: borderDate });
+  blogList = await Blog.findOne({borderDate: borderDate});
   //detail 값으로 넘겨줌
   res.json({ blogList: blogList });
 });
@@ -60,7 +60,6 @@ router.post('/blogList', async (req, res) => {
   const { borderDate, subject, nick, password, content } = req.body;
   console.log(borderDate, subject, nick, password, content);
 
-
   //유효성 검사
   isExist = await Blog.find({ borderDate });
   if (isExist.length == 0) {
@@ -68,6 +67,7 @@ router.post('/blogList', async (req, res) => {
   }
   res.send({ result: "success" });
 });
+
 
 
 // 수정 페이지
@@ -83,6 +83,17 @@ router.patch("/blogList/:borderDate", async (req, res) => {
   res.send({ result: "success" });
 })
 
+
+
+// 게시글 삭제 
+router.delete("/blogList/:borderDate", async (req, res) => {
+  const { borderDate } = req.params;
+  const isBorder = await Blog.find({ borderDate });
+  if (isBorder.length > 0) {
+    await Blog.deleteOne({ borderDate });
+  }
+  res.send({ result: "success" });
+});
 
 
 
