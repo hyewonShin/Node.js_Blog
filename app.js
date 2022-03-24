@@ -9,7 +9,7 @@ connect();
 
 
 const server = http.createServer(app);
-const hostname = '13.125.160.60';
+//const hostname = '13.125.160.60';
 
 
 // ejs 설정 
@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 //서버를 켜는 코드(app.listen)
 server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+    //console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 
