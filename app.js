@@ -9,7 +9,7 @@ connect();
 
 
 const server = http.createServer(app);
-const hostname = '127.0.0.1';
+const hostname = '13.125.160.60';
 
 
 // ejs 설정 
