@@ -1,7 +1,6 @@
 const express  = require("express");
 const Blog = require("../schemas/blog") // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
 const { send } = require("express/lib/response");
-
 const blog = require("../schemas/blog");
 const router = express.Router(); 
 
