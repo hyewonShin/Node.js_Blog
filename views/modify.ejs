@@ -38,13 +38,12 @@
                 //시간이 저장된 변수에 date moment 포맷으로 변경
                 let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
                 // console.log(blogList)
-                console.log(date)
+                //console.log(date)
 
-
-                $("#subject").text(blogList["subject"]);
-                $("#nick").text(blogList["nick"]);
-                $("#borderDate").text(date);
-                $("#content").text(blogList["content"]);
+                $("#subject").val(blogList["subject"]);
+                $("#nick").val(blogList["nick"]);
+                $("#borderDate").val(date);
+                $("#content").val(blogList["content"]);
             }
         });
     }

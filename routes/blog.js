@@ -1,13 +1,13 @@
 const express  = require("express");
 const Blog = require("../schemas/blog") // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
 const { send } = require("express/lib/response");
+
 const blog = require("../schemas/blog");
 const router = express.Router(); 
 
 router.get("/", (req, res) => {
     res.send("this is router page");
 });
-
 
 //게시글 작성목록조회
 router.get('/list', (req, res) => {
@@ -45,6 +45,7 @@ router.get("/blogList", async (req, res, next) => {
 }); 
 
 
+
 //  상세조회 페이지 
 router.get("/blogList/:borderDate", async (req, res) => {
   //주소에 borderDate가 파라미터값으로 가져옴
@@ -60,7 +61,7 @@ router.get("/blogList/:borderDate", async (req, res) => {
 router.post('/blogList', async (req, res) => {
   //작성한 정보 가져옴
   const { borderDate, subject, nick, password, content } = req.body;
-  console.log(borderDate, subject, nick, password, content);
+  //console.log(borderDate, subject, nick, password, content);
 
   //유효성 검사
   isExist = await Blog.find({ borderDate });
