@@ -1,14 +1,14 @@
-const http = require('http');
+//const http = require('http');
 const express = require('express');
 const app = express();
 const ejs = require('ejs');
 const connect = require("./schemas");
 
-const port = 9000;
+const port = 3000;
 connect();
 
 
-const server = http.createServer(app);
+//const server = http.createServer(app);
 //const hostname = '13.125.160.60';
 
 
@@ -45,10 +45,15 @@ app.get('/', (req, res) => {
     res.send("this is 루트 page");
 });
 
+
+app.listen(port, () => {
+    console.log(port, '포트로 서버가 열렸어요!');
+  });
+
 //서버를 켜는 코드(app.listen)
-server.listen(port, hostname, () => {
-    //console.log(`Server running at http://${hostname}:${port}/`);
-});
+// server.listen(port,() => {
+//     //console.log(`Server running at http://${hostname}:${port}/`);
+// });
 
 
 
