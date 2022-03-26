@@ -1,29 +1,29 @@
 const express  = require("express");
+const router = express.Router(); //exprees에서 제공하는 Router함수를 사용해 Router을 생성한다.
 const Blog = require("../schemas/blog") // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
-const { send } = require("express/lib/response");
-const blog = require("../schemas/blog");
-const router = express.Router(); 
+const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
+
 
 router.get("/", (req, res) => {
     res.send("this is router page");
 });
 
-//게시글 작성목록조회
+//게시글 목록조회 페이지 연결
 router.get('/list', (req, res) => {
   res.render('list');
 })
 
-//게시글 작성 페이지  
+//게시글 작성 페이지 연결
 router.get('/write', async(req, res) => {
   res.render('write');
 })
 
-//게시글 상세 조회 
+//게시글 상세 조회 연결
 router.get('/list_Detail', async(req, res) => {
   res.render('list_Detail');
 })
 
-//수정 페이지
+//수정 페이지 연결 
 router.get('/modify', async(req, res) => {
   res.render('modify');
 })

@@ -29,6 +29,8 @@ const blogSchema = mongoose.Schema({
 
 // model에 담아서 exports를 사용해 밖으로 내보내준다.
 // key값의 첫글자를 대문자로 해야된다(model임을 식별하기 위한 약속)
+// mongoose의 모델이란?
+// DB에 데이터를 저장해줄때 데이터의 구조를 담당해준다. 
 module.exports = mongoose.model("Blog", blogSchema);
 
 
