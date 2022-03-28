@@ -33,7 +33,7 @@
                 console.log(blogList) //값 넘어옴
                 //시간 표시를 이쁘게 하기위해서 변수에 지정해줌
                 let dateDetail = blogList['borderDate'];
-                let password = blogList['password'];
+                let password_write = blogList['password_write'];
 
                 //시간이 저장된 변수에 date moment 포맷으로 변경
                 let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
@@ -57,11 +57,11 @@
             success: function (response) {
                 let blogList = response["blogList"];
                 //db에 저장된 비밀번호 가져오기
-                let password = blogList['password']
+                let password_write = blogList['password_write']
                // console.log(password) //db저장된 비밀번호 출력됌 
 
                 //비밀번호 입력창에 입력한 값과 db로 가져온 password를 비교하여 검사
-                if (password === Number($("#password").val())) {
+                if (password_write === Number($("#password_write").val())) {
                     modify()
                 }
                 else {
@@ -117,7 +117,7 @@
         </div>
         <div class="label">
             <!-- 값을 string으로 받아서 넣어주기때문에 비교할때는 Number타입으로 바꿔줘야됌. -->
-            비밀번호 : <input type="password" id="password" name="password" />
+            비밀번호 : <input type="password" id="password_write" name="password_write" />
             <button onclick='modify_validation()'>확인</button>
             <button onclick="back()">취소</button>
         </div>

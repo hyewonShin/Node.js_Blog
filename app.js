@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
 
 // 포트 연결 
 const connect = require("./schemas");  ///schemas의 index.js
@@ -30,6 +31,8 @@ app.use(requestMiddleware);
 
 
 //순서가 중요하다! 달라지면 에러남.
+const userRouter = require("./routes/user");   
+app.use("/user", userRouter);
 const blogRouter = require("./routes/blog");   
 app.use("/blog", blogRouter); //요청이 맞을때 blogRouter 반환한다.
 // get메서드와 주소가 같을 시, 미들웨어 응답이 가로채서 먼저 나오게 된다.

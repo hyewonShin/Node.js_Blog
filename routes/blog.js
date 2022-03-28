@@ -2,6 +2,9 @@ const express  = require("express");
 const router = express.Router(); //exprees에서 제공하는 Router함수를 사용해 Router을 생성한다.
 const Blog = require("../schemas/blog") // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
+const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
+const res = require("express/lib/response");
+//const authMiddleware = require("../routes/auth-middleware");
 
 
 router.get("/", (req, res) => {
@@ -27,6 +30,7 @@ router.get('/list_Detail', async(req, res) => {
 router.get('/modify', async(req, res) => {
   res.render('modify');
 })
+
 
 
 
@@ -59,13 +63,13 @@ router.get("/blogList/:borderDate", async (req, res) => {
 // 게시글 작성 페이지
 router.post('/blogList', async (req, res) => {
   //작성한 정보 가져옴
-  const { borderDate, subject, nick, password, content } = req.body;
-  //console.log(borderDate, subject, nick, password, content);
+  const { borderDate, subject, nick, password_write, content } = req.body;
+  console.log(borderDate, subject, nick, password_write, content); // ok
 
   //유효성 검사
   isExist = await Blog.find({ borderDate });
   if (isExist.length == 0) {
-    await Blog.create({ borderDate, subject, nick, password, content });
+    await Blog.create({ borderDate, subject, nick, password_write, content });
   }
   res.send({ result: "success" });
 });
@@ -96,6 +100,7 @@ router.delete("/blogList/:borderDate", async (req, res) => {
   }
   res.send({ result: "success" });
 });
+
 
 
 
