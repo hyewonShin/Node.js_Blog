@@ -39,12 +39,34 @@
                         </tr>`
         $("#list-box").append(htmlTemp)
     }
+
+//태성님 코드 수정 (test코드)
+    // function test() {
+    //     $.ajax({
+    //             type: 'POST',
+    //             url: '/user/authUser',
+    //             contentType: "application/json",
+    //             xhrFields: { withCredentials: true },
+    //             data:{ },
+
+    //             success: (data, status, xhr) => {
+    //                 alert("성공했넹")
+    //             },
+
+    //             error: function (xhr, status, error) {
+    //                 alert("실패했넹")
+    //             },
+    //     })
+            
+    //     }
+
 </script>
 <body>
     <div id="list-box" name="list-box">
         <h1>글목록 페이지</h1>
         <button onClick="location.href='/user/login'">로그인</button> 
-   
+        <button onClick="location.href='/user/logout'">로그아웃</button> 
+        <button onclick="test();">내정보확인</button> 
     </div>
 </body>
 </html>

@@ -34,11 +34,11 @@
         password: password,
       }),
       success: function (response) {
-        localStorage.setItem("token", response.token);
+        //localStorage.setItem("token", response.token);
+        alert(response["msg"])
         window.location.replace("/blog/list");
       },
       error: function (xhr, ajaxSettings, thrownError) {
-       // alert(error.responseJSON.errorMessage);  // OK
        alert("닉네임 혹은 패스워드를 다시 확인해주세요.")
       },
     });

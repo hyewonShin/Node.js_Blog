@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
+const cookieParser = require('cookie-parser')
 
 // 포트 연결 
 const connect = require("./schemas");  ///schemas의 index.js
@@ -12,6 +13,11 @@ const ejs = require('ejs');
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+
+//GET이라는 HTTP메서드로 아래 경로로 요청이 들어왔다.(app.get)
+app.get('/', (req, res) => {
+  res.send("this is 루트 page");
+});
 
 
 // 에가 없으면 값이 undifind로 넘어간다.
@@ -30,19 +36,20 @@ const requestMiddleware = (req, res, next) => {  //requestMiddleware 미들웨�
 app.use(requestMiddleware);
 
 
-//순서가 중요하다! 달라지면 에러남.
+app.use(cookieParser());
 const userRouter = require("./routes/user");   
 app.use("/user", userRouter);
 const blogRouter = require("./routes/blog");   
-app.use("/blog", blogRouter); //요청이 맞을때 blogRouter 반환한다.
-// get메서드와 주소가 같을 시, 미들웨어 응답이 가로채서 먼저 나오게 된다.
-// express에서는 라우터를 미들웨어로 처리한다.
+app.use("/blog", blogRouter); 
 
 
-//GET이라는 HTTP메서드로 아래 경로로 요청이 들어왔다.(app.get)
-app.get('/', (req, res) => {
-    res.send("this is 루트 page");
-});
+// cors 해결하기
+const cors = require("cors");
+app.use(cors());
+
+// cookie Parser 하기
+app.use(cookieParser());
+
 
 
 // 서버구동 

@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const blogSchema = mongoose.Schema({
     borderDate: {
         type: Date,
-        unique: true,
+        //unique: true,
     },
     subject: {
         type: String,
@@ -19,7 +19,7 @@ const blogSchema = mongoose.Schema({
     password_write: {  //글작성시 사용 
         type: Number,
         required: true, //필수적이어야 된다. 
-        unique: true,  //id이기 때문에 유니크(유일)해야된다.
+       // unique: true,  //id이기 때문에 유니크(유일)해야된다.
     },
     content: {
         type: String,
