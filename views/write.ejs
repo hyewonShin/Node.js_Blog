@@ -23,9 +23,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
     function post_write() {
-      //글작성 시각 저장할 변수
-      let date = new Date()
-      let borderDate = date.getTime()
 
       $.ajax({
         type: "POST",
@@ -37,7 +34,7 @@
           nick: $("#nick").val(),
           password_write: $("#password_write").val(),
           content: $("#content").val(),
-          borderDate
+    
         },
         success: function (response) {
           if (response['result'] == "success") {
@@ -47,7 +44,6 @@
         }
       });
     }
-
 
   </script>
 </body>

@@ -9,11 +9,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script>
+
     $(document).ready(function () {
         get_detail()
-        make_list();
     });
-
+    
     function get_detail() {
         $.ajax({
             type: "GET",
@@ -23,22 +23,35 @@
             success: function (response) {
                 //routes에서 보내준 값 받음. 
                  let blogList = response["blogList"]
-               
-                 for (let i = 0; i < blogList.length; i++) {
-                     let date = moment(blogList[i]['borderDate']).format('YYYY-MM-DD HH:mm')
-                     make_list(blogList[i], date)
+                    //console.log(blogList); //ok
+
+                 for (i = 0; i < blogList.length; i++) {
+                let subject = blogList[i]["subject"]
+                let nick = blogList[i]["nick"]
+                let content = blogList[i]["content"]
+                let password_write = blogList[i]["password_write"]
+                let NowDate = blogList[i]["NowDate"]
+                let PostId = blogList[i]["PostId"]
+
+                //console.log(subject, nick, content); //ok
+
+                let htmlTemp = `<tr>
+                             <td><a href='list_Detail?PostId=${PostId}'>${subject}</a></td>
+                             <td>${nick}</td>
+                             <td>${NowDate}</td>
+                             </tr>`
+                            
+
+                $("#list-box").append(htmlTemp)
                  }
+               
             }
         })
     }
-    function make_list(blog, date) {
-        let htmlTemp = `<tr>
-                            <td><a href='list_Detail?borderDate=${blog["borderDate"]}'>${blog["subject"]}</a></td>
-                            <td>${blog["nick"]}</td>
-                            <td>${date}</td>
-                        </tr>`
-        $("#list-box").append(htmlTemp)
-    }
+
+
+
+
 
 //태성님 코드 수정 (test코드)
     // function test() {
@@ -66,7 +79,7 @@
         <h1>글목록 페이지</h1>
         <button onClick="location.href='/user/login'">로그인</button> 
         <button onClick="location.href='/user/logout'">로그아웃</button> 
-        <button onclick="test();">내정보확인</button> 
+        <!-- <button onclick="test();">내정보확인</button>  -->
     </div>
 </body>
 </html>

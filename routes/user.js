@@ -80,6 +80,7 @@ router.post("/auth", async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.userId }, "seceret_my_key");
+    //응답값으로 클라에게 토큰 보내줌 
     res.cookie('token', token).send({msg: "로그인이 완료 되었습니다."})
 
 });

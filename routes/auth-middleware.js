@@ -4,21 +4,15 @@ const User = require("../schemas/user")
 
 module.exports = (req, res, next) => {
 
-    // 프런트앤드에서 로그인이 성공했을때 받은토큰을 아래와 같은 양식으로 
-    // HTTP header에 넣어서 다시 서버로 보낸다. 
-    // Authorization: Bearer JWT토큰내용
-
-    //프런트엔드에서 대문자로 보내도 소문자로 받음.
-    //headers 안에 head가 포함되어 있다.
-   // const { authorization } = req.headers;
+    
     const tokenValue = req.cookies.token;
    //console.log(tokenValue); //ok
 
 
-    try {
+    try { //verify:유효성검사 성공하면 
         const { userId }  = jwt.verify(tokenValue, "seceret_my_key");
 
-        //db연결
+        //사용자가 db에 존재하는지 확인
         User.findById(userId).then((user) => {
             res.locals.user = user; 
            // console.log(res.locals.user); //ok

@@ -1,10 +1,13 @@
 const express  = require("express");
 const router = express.Router(); //exprees에서 제공하는 Router함수를 사용해 Router을 생성한다.
 const Blog = require("../schemas/blog"); // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
+const Comment = require("../schemas/comment"); 
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
-const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
+//const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
 const res = require("express/lib/response");
 const authMiddleware = require("../routes/auth-middleware");
+const CryptoJS = require("crypto-js");
+
 
 router.get("/", (req, res) => {
     res.send("this is router page");
@@ -25,9 +28,14 @@ router.get('/list_Detail', async(req, res) => {
   res.render('list_Detail');
 })
 
-//수정 페이지 연결 
+//게시글 수정 페이지 연결 
 router.get('/modify', async(req, res) => {
   res.render('modify');
+})
+
+//댓글 수정 페이지 연결 
+router.get('/modifyComment', async(req, res) => {
+  res.render('modifyComment');
 })
 
 
@@ -38,7 +46,7 @@ router.get('/modify', async(req, res) => {
 router.get("/blogList", async (req, res, next) => {
 
   try {
-    const blogList = await Blog.find({}).sort("-borderDate");
+    const blogList = await Blog.find({}).sort("-NowDate");
     res.json({ blogList: blogList });
   } catch (err) {
     console.error(err);
@@ -47,28 +55,37 @@ router.get("/blogList", async (req, res, next) => {
 }); 
 
 
-
-//  상세조회 페이지 
-router.get("/blogList/:borderDate", async (req, res) => {
-  //주소에 borderDate가 파라미터값으로 가져옴
-  const { borderDate } = req.params;
-  blogList = await Blog.findOne({borderDate: borderDate});
+ //상세조회 페이지 
+ router.get("/blogList/:PostId", async (req, res) => {
+  //주소에 PostId를 파라미터값으로 가져옴
+  const { PostId }  = req.params;
+  //console.log(PostId); //ok 
+  blogList = await Blog.findOne({PostId: PostId});
   //detail 값으로 넘겨줌
   res.json({ blogList: blogList });
 });
 
 
 
-// 게시글 작성 페이지
+// 게시글 작성 페이지 //저장됌 
 router.post('/blogList', authMiddleware, async (req, res) => {
   //작성한 정보 가져옴
-  const { borderDate, subject, nick, password_write, content } = req.body;
-  console.log(borderDate, subject, nick, password_write, content); // ok
+  const { subject, nick, password_write, content } = req.body;
+  //console.log(borderDate, subject, nick, password_write, content); // ok
+
+  const moment = require('moment'); 
+  require('moment-timezone'); 
+  moment.tz.setDefault("Asia/Seoul"); 
+  const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
+  //console.log(NowDate); //ok
+
+  const PostId = CryptoJS.SHA256(NowDate)['words'][0];
+  //console.log(PostId) //ok
+  const existPostId = await Blog.find({ PostId });
 
   //유효성 검사
-  isExist = await Blog.find({ borderDate });
-  if (isExist.length == 0) {
-    await Blog.create({ borderDate, subject, nick, password_write, content });
+  if (existPostId.length == 0) {
+    await Blog.create({ NowDate, PostId, subject, content, nick, password_write });
   }
   res.send({ result: "success" });
 });
@@ -76,14 +93,14 @@ router.post('/blogList', authMiddleware, async (req, res) => {
 
 
 // 수정 페이지
-router.patch("/blogList/:borderDate", authMiddleware, async (req, res) => {
+router.patch("/blogList/:PostId", authMiddleware, async (req, res) => {
  
-  const { borderDate } = req.params;
+  const { PostId } = req.params;
   const { nick, subject, content } = req.body;
 
-  isBorder = await Blog.find({ borderDate });
+  isBorder = await Blog.find({ PostId });
   if (isBorder.length) {
-    await Blog.updateOne({ borderDate }, { $set: { nick, subject, content } });
+    await Blog.updateOne({ PostId }, { $set: { nick, subject, content } });
   }
   res.send({ result: "success" });
 })
@@ -91,54 +108,64 @@ router.patch("/blogList/:borderDate", authMiddleware, async (req, res) => {
 
 
 // 게시글 삭제 
-router.delete("/blogList/:borderDate", async (req, res) => {
-  const { borderDate } = req.params;
-  const isBorder = await Blog.find({ borderDate });
+router.delete("/blogList/:PostId", async (req, res) => {
+  const { PostId } = req.params;
+  const isBorder = await Blog.find({ PostId });
   if (isBorder.length > 0) {
-    await Blog.deleteOne({ borderDate });
+    await Blog.deleteOne({ PostId });
   }
   res.send({ result: "success" });
 });
 
 
 
-// 태성님 코드 //
+
+
+// 태성님 코드 : comment//
 // 댓글 >> DB로 올리기 (완료)
 router.post("/postingComment", authMiddleware, async (req, res) => {
-  const { Comment, PostId } = req.body
+  const { comment, PostId } = req.body
+  //console.log(comment, PostId); //ok
 
-  if (!Comment.length) {
-      return res.json({ msg: "댓글 내용이 없습니다. 작성후 등록해 주세요." })
+  if (!comment.length) {
+      return res.json({ msg: "댓글 내용이 없습니다. 작성후 등록해 주세요." }) //ok
     }
 
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
   const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
+  //console.log(user); //ok
   
   // 현재시간으로 댓글의 ID 생성
   const moment = require('moment'); 
   require('moment-timezone'); 
   moment.tz.setDefault("Asia/Seoul"); 
-  const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
+  const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss'));  
   const CommentId = CryptoJS.SHA256(NowDate)['words'][0];
+  //console.log(NowDate) //OK  
+  //console.log(CommentId);  //ok
 
   // 해당 댓글의 ID가 DB에 있는지 조회
-  const existCommentId = await CommentDB.find({ CommentId });
+  const existCommentId = await Comment.find({ CommentId });
   // const UserId = user._id.toString()
-  const UserId = user.NickName
+  const UserId = user.id
 
   // 같은 댓글 ID가 DB에 있다면 오류발생 
   if (existCommentId.length) {
       return res.json({ msg: "예상치 못한 오류입니다." })
     }
 
-  res.json({ msg: "댓글이 등록이 완료되었습니다!" })
-  await CommentDB.create({ NowDate, Comment, CommentId, PostId, UserId });
+  res.json({ msg: "댓글 등록이 완료되었습니다!" })
+  await Comment.create({ NowDate, comment, CommentId, PostId, UserId });
 })
 
-// DB >> 댓글 내려주기
-router.get("/lookupComment", async (req, res) => {
-  const PostId = req.query.PostId;
-  const comment_info = await CommentDB.find({ PostId });
+
+
+// DB >> 댓글 보여주기
+router.get("/lookupComment/:PostId", async (req, res) => {
+    //주소에 PostId를 파라미터값으로 가져옴
+    const { PostId }  = req.params;
+  //const PostId = req.query.PostId; //쿼리문으로 받으면 모든 포스트에 동일한 댓글이 보임.
+  const comment_info = await Comment.find({ PostId });
   const sorted_total_ls = comment_info.sort( (a, b) => a.NowDate > b.NowDate ? -1 : 1)
   res.json(sorted_total_ls);
 })
@@ -161,10 +188,17 @@ router.get("/updateComment", (req, res) => {
 })
 
 // 댓글 수정전 원본데이터 내려주기
-router.get("/updateCommentData", async (req, res) => {
-  const PostId = req.query.PostId;
-  const CommentId = req.query.CommentId;
-  const Comment_info = await CommentDB.find({$and: [{PostId, CommentId}] });
+router.get("/updateCommentData/:PostId/:CommentId", async (req, res) => {
+  // const { PostId }  = req.params;
+  // const { CommentId }  = req.params;
+
+   const PostId = req.query.PostId;
+   const CommentId = req.query.CommentId;
+
+  console.log(PostId);
+  console.log(Comment)
+
+  const Comment_info = await Comment.find({$and: [{PostId, CommentId}] });
  
   res.json(Comment_info);
 });

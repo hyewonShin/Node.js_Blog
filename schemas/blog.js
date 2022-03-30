@@ -5,13 +5,17 @@ const mongoose = require("mongoose");
 
 //model 정해주기 // 각 카테고리가 유형에 맞는지 검사해준다.
 const blogSchema = mongoose.Schema({
-    borderDate: {
-        type: Date,
-        //unique: true,
-    },
     subject: {
         type: String,
         required: true, //필수적이어야 된다. 
+    },
+    content: {
+        type: String,
+    },
+    PostId: {
+        type: String,
+        required: true,
+        //unique: true
     },
     nick: {  //글작성시 사용 
         type: String,
@@ -21,8 +25,9 @@ const blogSchema = mongoose.Schema({
         required: true, //필수적이어야 된다. 
        // unique: true,  //id이기 때문에 유니크(유일)해야된다.
     },
-    content: {
+    NowDate: {
         type: String,
+        required: true,
     },
 });
 

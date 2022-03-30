@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,53 +12,75 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script>
-  //주소에 있는 정보 가져올때 사용
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const borderDate = urlParams.get("borderDate");
+ //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
+ let PostId = new URLSearchParams(location.search).get('PostId')
+ // console.log(PostId); //ok 
 
-  $(document).ready(function () { //주석
+$(document).ready(function () { //주석
     get_detail()
     call_comment();
   });
+
+
   function get_detail() {
     $.ajax({
       type: "GET",
-      url: `blogList/${borderDate}`,
+      url: `blogList/${PostId}`,
+      dataType: "json",
       data: {},
       success: function (response) {
-        let blogList = response["blogList"];
-        let dateDetail = blogList['borderDate']
-        //db에 저장된 date moment 포맷으로 변경
-        let date = moment(blogList['borderDate']).format('YYYY-MM-DD HH:mm')
-        // console.log(blogList)
-        //console.log(date)
-        $("#subject").text(blogList["subject"]);
-        $("#nick").text(blogList["nick"]);
-        $("#borderDate").text(date);
-        $("#content").text(blogList["content"]);
+
+        //routes에서 보내준 값 받음. 
+        let blogList = response["blogList"]
+        //console.log(blogList);//브라우저 콘솔에서 나온다.ok 
+
+        //값이 1개씩밖에 안들어있는데 for문 돌리면 망함. 
+        // for (i = 0; i < blogList.length; i++) {
+        //         let subject = blogList[i]["subject"]
+        //         let nick = blogList[i]["nick"]
+        //         let content = blogList[i]["content"]
+        //         let password_write = blogList[i]["password_write"]
+        //         let NowDate = blogList[i]["NowDate"]
+        //         let PostId = blogList[i]["PostId"]
+
+         // console.log(subject, nick, content, password_write, NowDate, PostId);
+
+          let subject = blogList["subject"]
+          let NowDate = blogList["NowDate"]
+          let nick = blogList["nick"]
+          let content = blogList["content"]
+
+          let temp_html = `<h1>글조회 페이지</h1>
+                            <div>
+                              <h5> 글제목: ${subject}<h5>
+                              <h5>작성시간: ${NowDate}<h5>
+                              <h5>작성자명: ${nick}<h5>
+                              <h5>글내용: ${content}<h5>
+                            </div>`
+          $('#detailAppend').append(temp_html)
+        
       }
-    });
+    })
   }
 
 
   function modify_detail(blogList) {
-    location.href = "modify?borderDate=" + borderDate
+    location.href = "modify?PostId=" + PostId
   }
 
 
   function remove_validation() {
     $.ajax({
       type: "GET",
-      url: `blogList/${borderDate}`,
+      url: `blogList/${PostId}`,
       data: {},
       success: function (response) {
         let blogList = response["blogList"];
         //console.log(blogList)
         //db에 저장된 비밀번호 가져오기
-        let password = blogList['password']
+        let password_write = blogList['password_write']
         //비밀번호 입력창에 입력한 값과 db로 가져온 pwd를 비교하여 검사
-        if (password === Number($("#password").val())) {
+        if (password_write === Number($("#password_write").val())) {
           remove()
         }
         else {
@@ -70,7 +93,7 @@
   function remove() {
     $.ajax({
       type: "DELETE",
-      url: `blogList/${borderDate}`,
+      url: `blogList/${PostId}`,
       data: {},
       success: function (response) {
         if (response["result"] == "success") {
@@ -81,33 +104,34 @@
   }
 
 
-// 완료
-function call_comment() {
-            //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
-            let PostId = new URLSearchParams(location.search).get('PostId')
+ // 댓글 보여주기 
+  function call_comment() {
+    //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
+    let PostId = new URLSearchParams(location.search).get('PostId')
 
-            $.ajax({
-                type: 'GET',
-                url: `/api/lookupComment?PostId=${PostId}`,
-                contentType: "application/json",
-                data: {},
+    $.ajax({
+      type: 'GET',
+      url: `lookupComment/${PostId}`,
+      contentType: "application/json",
+      data: {},
 
-                success: function (response) {
-                    let raw = response
-                    for (let i = 0; i < raw.length; i++) {
-                        let UserId = raw[i]['UserId'];
-                        let Comment = raw[i]['Comment'];
-                        let CommentId = raw[i]['CommentId']
-                        let NowDate = raw[i]['NowDate'];
+      success: function (response) {
 
-                        let temp_html = `
+        let raw = response //sorted_total_ls
+        for (let i = 0; i < raw.length; i++) {
+          let UserId = raw[i]['UserId'];
+          let comment = raw[i]['comment'];
+          let CommentId = raw[i]['CommentId']
+          let NowDate = raw[i]['NowDate'];
+
+          let temp_html = `
                                     <!-- 댓글 시작 -->
                                     <div class="card" style="width: 1300px; padding: 15px;">
                                         <div class="row">
                                             <!-- 내용 -->
                                             <div class="col-lg-3">
                                                 <div class="card-body">
-                                                ${Comment}
+                                                ${comment}
                                                 </div>
                                             </div>
                                             <!-- 공백 -->
@@ -134,99 +158,89 @@ function call_comment() {
                                     </div>
                                     <p></p>
                                     `
-                                
-                            $('#commentAppend').append(temp_html)   
-                    }
-                }})
 
+          $('#commentAppend').append(temp_html)
         }
+      }
+    })
 
-        // 완료
-        function posting_comment_auth() {
-            let PostId = new URLSearchParams(location.search).get('PostId')
-            let Comment = $("#Comment").val()
+  }
 
-            $.ajax({
-                type: 'POST',
-                url: '/api/postingComment',
-                contentType: "application/json",
-                xhrFields: { withCredentials: true },
-                data: JSON.stringify({ 
-                    Comment: Comment,
-                    PostId: PostId,
-                }),
+  // 댓글작성
+  function posting_comment_auth() {
+    let PostId = new URLSearchParams(location.search).get('PostId')
+    let comment = $("#comment").val()
 
-                success: function (response) {
-                    alert(response["msg"])
-                    window.location.reload()
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert(jqXHR.responseText)
-                    window.location.reload()
-                }
-            })
+    $.ajax({
+      type: 'POST',
+      url: 'postingComment',
+      contentType: "application/json",
+      xhrFields: { withCredentials: true },
+      data: JSON.stringify({
+        comment: comment,
+        PostId: PostId,
+      }),
 
-            }
-        
-        // 댓글수정기능 // 인증미들웨어에 콜하기
-        function update_comment_auth(CommentId) {
-            let PostId = new URLSearchParams(location.search).get('PostId')
+      success: function (response) {
+        alert(response["msg"])
+        window.location.reload()
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        alert(jqXHR.responseText)
+        window.location.reload()
+      }
+    })
+  }
 
-            $.ajax({
-                type: 'POST',
-                url: '/api/updateCommentAuth',
-                contentType: "application/json",
-                xhrFields: { withCredentials: true },
-                data: JSON.stringify({ 
-                    CommentId: CommentId,
-                    PostId: PostId,
-                }),
+  // 댓글수정기능 // 인증미들웨어에 콜하기
+  function update_comment_auth(CommentId) {
+    let PostId = new URLSearchParams(location.search).get('PostId')
 
-                success: function (response) {
-                    alert("성공했엉 이제 수정하러 가보자")
-                    document.location.href=`/api/updateComment?CommentId=${CommentId}&PostId=${PostId}`
-                },
-                error: function (err) {
-                    alert(response["실패했어요"])
-                }
-            })
-        }
-        
+    $.ajax({
+      type: 'POST',
+      url: 'updateCommentAuth',
+      contentType: "application/json",
+      xhrFields: { withCredentials: true },
+      data: JSON.stringify({
+        CommentId: CommentId,
+        PostId: PostId,
+      }),
 
-
+      success: function (response) {
+        alert("성공했엉 이제 수정하러 가보자")
+        document.location.href = `/blog/modifyComment?CommentId=${CommentId}&PostId=${PostId}`
+      },
+      error: function (err) {
+        alert(response["실패했어요"])
+      }
+    })
+  }
 </script>
 
 
 
 <body>
-  <h1>글조회 페이지</h1>
-  <div class="form-group">
-    제목 : <label id="subject"></label></br>
-    작성자명 : <label id="nick"></label></br>
-    작성날짜 : <label id="borderDate"></label></br>
-    내용 : <label id="content"></label></br>
+  <!-- 상세페이지 컨트롤 -->
+  <div id="detailAppend" name="detailAppend"> 
+    
     <div class="btncls">
-      <button class="btn btn-primary" type="submit" onclick="modify_detail()">수정</button>
-      <button class="btn btn-primary" type="submit" onclick="remove_validation()">삭제</button>
+      <button class="btn btn-primary" type="submit" onclick="modify_detail()">수정</button></br></br>
+     
     </div>
       <a></a>비밀번호를 입력하세요</a></br>
-    <input class="inputPwd" id="password" type="number" placeholder="숫자를 입력하세요" />
+    <input class="inputPwd" id="password_write" type="number" placeholder="숫자를 입력하세요" />
+     <button class="btn btn-primary" type="submit" onclick="remove_validation()">삭제</button>
   </div>
-</body>
 
 
-
-    <!-- 댓글 창 -->
-    <div style="margin: 30px 300px;" id="commentAppend">
-
-    </div>
-
-    <!-- 댓글 작성 -->
-        댓글 달기</br> <textarea class="form-control" rows="3" id="Comment"></textarea></br>
-        <button type="button" class="btn btn-success" onclick="posting_comment_auth()">등록</button>
-    </div>
+  <!-- 댓글 작성 -->
+  댓글 달기</br> <textarea rows="3" id="comment"></textarea></br>
+  <button type="button" class="btn btn-success" onclick="posting_comment_auth()">등록</button>
+  </div>
 
 
-
+  <!-- 댓글 창 -->
+  <div id="commentAppend">
+  </div>
 
 </html>
