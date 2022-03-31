@@ -19,25 +19,28 @@
             // PostId가 동일한 게시글을 받아오기
             let PostId = new URLSearchParams(location.search).get('PostId')
             let CommentId = new URLSearchParams(location.search).get('CommentId')
+            //console.log(PostId);  //ok
+            //console.log(CommentId);   //ok
+ 
 
             $.ajax({
                 type: 'GET',
-                url: `/updateCommentData?PostId=${PostId}&CommentId=${CommentId}`,
+                url: `/blog/updateCommentData?PostId=${PostId}&CommentId=${CommentId}`,
                 dataType: 'json',
                 data: {},
 
                 success: function (response) {
-                let raws = response
-
+                let raws = response //Comment_info
+                       // console.log(response)
                 for (i = 0; i < raws.length; i++) {
+                    //console.log(raws.length); // 출력값 : 1
                     let comment = raws[i]["comment"]
                     let CommentId = raws[i]["CommentId"]
                     let UserId = raws[i]["UserId"]
                     let PostId = raws[i]["PostId"]
                     let NowDate = raws[i]["NowDate"]
 
-                    let temp_html = `<form style="margin: 30px 300px;">
-                                        <div class="mb-3">
+                    let temp_html = ` <div class="mb-3">
                                             <label for="exampleFormControlInput1" class="form-label">닉네임 : </label>
                                             <label for="exampleFormControlInput1" class="form-label">${UserId}</label>
                                         </div>
@@ -48,13 +51,12 @@
                                         <p></P>
                                         <div class="mb-3">
                                             <label for="exampleFormControlTextarea1" class="form-label">댓글 내용</label>
-                                            <textarea class="form-control" id="Content" rows="3">${comment}</textarea>
+                                            <textarea class="form-control" id="comment" rows="3">${comment}</textarea>
                                         </div>
-                                        <button type="submit" class="btn btn-success" onclick="updateComment()">수정 완료하기</button>
-                                        <button type="submit" class="btn btn-danger" onclick="confirmComment()" style="margin-left:20px;">삭제 완료하기</button>
-                                        <button type="button" class="btn btn-warning" onclick="location.href='/'" style="margin-left:20px;">취소</button>
-                                    </form>`
-                    
+                                        <button type="submit"  onclick="updateComment()">수정 완료하기</button>
+                                        <button type="submit"  onclick="confirmComment()">삭제 완료하기</button>
+                                        <button type="button"  onclick="location.href='/'">취소</button>
+                                    `
                     $('#editRawInfo').append(temp_html)                
                     }
                 }
@@ -65,19 +67,19 @@
         function updateComment() {
             let PostId = new URLSearchParams(location.search).get('PostId')
             let CommentId = new URLSearchParams(location.search).get('CommentId')
-            let comment = $("#content").val()
+            let comment = $("#comment").val()
 
             let myURL = new URLSearchParams(location.search)
 
             $.ajax({
                 type: 'POST',
-                url: '/api/updateComment',
+                url: '/blog/updateComment',
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
                 data: JSON.stringify({ 
                     CommentId: CommentId,
                     PostId: PostId,
-                    Comment: Comment,
+                    comment: comment,
                 }),
 
                 success: async function (response) {
@@ -99,13 +101,13 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/api/deleteComment',
+                url: '/blog/deleteComment',
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
                 data: JSON.stringify({ 
                     CommentId: CommentId,
                     PostId: PostId,
-                    Comment: Comment,
+                    comment: comment,
                 }),
 
                 success: function (response) {
@@ -131,11 +133,11 @@
 </head>
 
 <body>
-    <h1>댓글수정화면</h1>
+    <h1>댓글수정화면</h1></br>
     <div id="editRawInfo">
     </div>
     
     
  
 </body>
-
+</html>

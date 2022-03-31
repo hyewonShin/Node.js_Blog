@@ -152,7 +152,7 @@ $(document).ready(function () { //주석
                                             </div>
                                             <!-- 버튼 -->
                                             <div class="col-lg-2" style="padding: 15px; margin: auto">
-                                                <button type="button" class="btn btn-warning" onclick="update_comment_auth(${CommentId})">수정</button>
+                                                <button type="button" onclick="update_comment_auth(${CommentId})">수정</button>
                                             </div>
                                         </div>
                                     </div>
@@ -192,6 +192,7 @@ $(document).ready(function () { //주석
     })
   }
 
+  
   // 댓글수정기능 // 인증미들웨어에 콜하기
   function update_comment_auth(CommentId) {
     let PostId = new URLSearchParams(location.search).get('PostId')

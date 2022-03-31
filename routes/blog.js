@@ -172,63 +172,64 @@ router.get("/lookupComment/:PostId", async (req, res) => {
 
 // 댓글 수정버튼 누르면 인증미들웨어로 보내서 검증하기
 router.post("/updateCommentAuth", authMiddleware, async (req, res) => {
-  // const { CommentId, PostId } = req.body
+   const { CommentId, PostId } = req.body
 
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
-  // const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
+   const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
   
-  // console.log({ CommentId, PostId, user })
+  // console.log({ CommentId, PostId, user }) //넘어옴 
+
   res.send("인정합니당")
 })
 
 // 댓글 수정페이지html 내려주기
-router.get("/updateComment", (req, res) => {
-  const path = require("path")
-  res.sendFile(path.join(__dirname + '/../public/updateComment.html'))
-})
+// router.get("/updateComment", (req, res) => {
+//   const path = require("path")
+//   res.sendFile(path.join(__dirname + '/../public/updateComment.html'))
+// })
 
 // 댓글 수정전 원본데이터 내려주기
-router.get("/updateCommentData/:PostId/:CommentId", async (req, res) => {
-  // const { PostId }  = req.params;
-  // const { CommentId }  = req.params;
+router.get("/updateCommentData", async (req, res) => {
 
    const PostId = req.query.PostId;
    const CommentId = req.query.CommentId;
 
-  console.log(PostId);
-  console.log(Comment)
+ // console.log(PostId);  //ok
+ // console.log(Comment)   //ok
 
   const Comment_info = await Comment.find({$and: [{PostId, CommentId}] });
- 
+ // console.log(Comment_info) //ok
   res.json(Comment_info);
 });
 
 // 댓글 수정하기
 router.post("/updateComment", async (req, res) => {
-  const { CommentId, PostId, Comment } = req.body
+  const { CommentId, PostId, comment } = req.body
 
-  // 현재시간 생성
+  //console.log(CommentId, PostId, comment)  //ok
+
+  // 현재시간 생성(댓글 수정시간)
   const moment = require('moment'); 
   require('moment-timezone'); 
   moment.tz.setDefault("Asia/Seoul"); 
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
 
   // CommentId와 PostId를 기준으로 Data 받아오기
-  const exist_PostId_CommentId = await CommentDB.find({$and: [{PostId, CommentId}] });
+  const exist_PostId_CommentId = await Comment.find({$and: [{PostId, CommentId}] });
   
-  // PostId와 Pw가 일치하는 Data가 없을경우
+  // PostId와 CommentId가 일치하는 Data가 없을경우
   if (exist_PostId_CommentId.length === 0) {
       return res.json({msg: "본인의 댓글이 아닙니다."})
   }
 
   res.json({msg: "댓글 수정이 완료되었습니다."})
-  await CommentDB.updateOne({ CommentId }, { $set: { Comment, NowDate} } )
+  await Comment.updateOne({ CommentId }, { $set: { comment, NowDate} } )
   
 })
 
 // 댓글 삭제하기
 router.post("/deleteComment", async (req, res) => {
-  const { CommentId, PostId, Comment } = req.body
+  const { CommentId, PostId, comment } = req.body
 
   // 현재시간 생성
   const moment = require('moment'); 
@@ -237,7 +238,7 @@ router.post("/deleteComment", async (req, res) => {
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
 
   // CommentId와 PostId를 기준으로 Data 받아오기
-  const exist_PostId_CommentId = await CommentDB.find({$and: [{PostId, CommentId}] });
+  const exist_PostId_CommentId = await Comment.find({$and: [{PostId, CommentId}] });
   
   // PostId와 Pw가 일치하는 Data가 없을경우
   if (exist_PostId_CommentId.length === 0) {
@@ -245,7 +246,7 @@ router.post("/deleteComment", async (req, res) => {
   }
 
   res.json({msg: "댓글 삭제가 완료되었습니다."})
-  await CommentDB.deleteOne({ CommentId } )
+  await Comment.deleteOne({ CommentId } )
   
 })
 
