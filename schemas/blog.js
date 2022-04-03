@@ -17,6 +17,10 @@ const blogSchema = mongoose.Schema({
         required: true,
         //unique: true
     },
+    UserId: {
+        type: String,
+        required: true,
+    },
     nick: {  //글작성시 사용 
         type: String,
     },

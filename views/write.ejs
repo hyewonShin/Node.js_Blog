@@ -38,10 +38,10 @@
         },
         success: function (response) {
           if (response['result'] == "success") {
-            alert("글이 등록 되었습니다.");
-            window.location.href = "/blog/list"
+            alert("게시글 작성에 성공하였습니다!")
+            location.href = "/blog/list"
           }
-        }
+        },
       });
     }
 

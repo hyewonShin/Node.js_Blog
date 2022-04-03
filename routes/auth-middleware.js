@@ -23,7 +23,6 @@ module.exports = (req, res, next) => {
         console.log("로그인후 사용해주세요.")
         res.status(401).send("로그인 후 사용하세요");
         return;
-
     }
 };
 

@@ -12,11 +12,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script>
- //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
- let PostId = new URLSearchParams(location.search).get('PostId')
- // console.log(PostId); //ok 
+  //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
+  let PostId = new URLSearchParams(location.search).get('PostId')
+  // console.log(PostId); //ok 
 
-$(document).ready(function () { //주석
+  $(document).ready(function () { //주석
     get_detail()
     call_comment();
   });
@@ -34,40 +34,28 @@ $(document).ready(function () { //주석
         let blogList = response["blogList"]
         //console.log(blogList);//브라우저 콘솔에서 나온다.ok 
 
-        //값이 1개씩밖에 안들어있는데 for문 돌리면 망함. 
-        // for (i = 0; i < blogList.length; i++) {
-        //         let subject = blogList[i]["subject"]
-        //         let nick = blogList[i]["nick"]
-        //         let content = blogList[i]["content"]
-        //         let password_write = blogList[i]["password_write"]
-        //         let NowDate = blogList[i]["NowDate"]
-        //         let PostId = blogList[i]["PostId"]
+        let subject = blogList["subject"]
+        let NowDate = blogList["NowDate"]
+        let nick = blogList["nick"]
+        let content = blogList["content"]
 
-         // console.log(subject, nick, content, password_write, NowDate, PostId);
-
-          let subject = blogList["subject"]
-          let NowDate = blogList["NowDate"]
-          let nick = blogList["nick"]
-          let content = blogList["content"]
-
-          let temp_html = `<h1>글조회 페이지</h1>
+        let temp_html = `<h1>글조회 페이지</h1>
                             <div>
                               <h5> 글제목: ${subject}<h5>
                               <h5>작성시간: ${NowDate}<h5>
                               <h5>작성자명: ${nick}<h5>
                               <h5>글내용: ${content}<h5>
                             </div>`
-          $('#detailAppend').append(temp_html)
-        
+        $('#detailAppend').append(temp_html)
+
       }
     })
   }
 
 
-  function modify_detail(blogList) {
-    location.href = "modify?PostId=" + PostId
-  }
-
+function modify_detail(blogList) {
+  location.href = "modify?PostId=" + PostId
+}
 
   function remove_validation() {
     $.ajax({
@@ -104,7 +92,7 @@ $(document).ready(function () { //주석
   }
 
 
- // 댓글 보여주기 
+  // 댓글 보여주기 
   function call_comment() {
     //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
     let PostId = new URLSearchParams(location.search).get('PostId')
@@ -192,7 +180,6 @@ $(document).ready(function () { //주석
     })
   }
 
-  
   // 댓글수정기능 // 인증미들웨어에 콜하기
   function update_comment_auth(CommentId) {
     let PostId = new URLSearchParams(location.search).get('PostId')
@@ -208,12 +195,12 @@ $(document).ready(function () { //주석
       }),
 
       success: function (response) {
-        alert("성공했엉 이제 수정하러 가보자")
         document.location.href = `/blog/modifyComment?CommentId=${CommentId}&PostId=${PostId}`
       },
-      error: function (err) {
-        alert(response["실패했어요"])
-      }
+      error: function (jqXHR, textStatus, errorThrown) {
+        alert("로그인이 필요한 기능입니다.")
+        window.location.replace("/user/login");
+      },
     })
   }
 </script>
@@ -222,15 +209,15 @@ $(document).ready(function () { //주석
 
 <body>
   <!-- 상세페이지 컨트롤 -->
-  <div id="detailAppend" name="detailAppend"> 
-    
+  <div id="detailAppend" name="detailAppend">
+
     <div class="btncls">
       <button class="btn btn-primary" type="submit" onclick="modify_detail()">수정</button></br></br>
-     
+
     </div>
-      <a></a>비밀번호를 입력하세요</a></br>
+    <a></a>비밀번호를 입력하세요</a></br>
     <input class="inputPwd" id="password_write" type="number" placeholder="숫자를 입력하세요" />
-     <button class="btn btn-primary" type="submit" onclick="remove_validation()">삭제</button>
+    <button class="btn btn-primary" type="submit" onclick="remove_validation()">삭제</button>
   </div>
 
 

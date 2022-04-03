@@ -20,12 +20,10 @@ app.get('/', (req, res) => {
 });
 
 
-// 에가 없으면 값이 undifind로 넘어간다.
-//form-urlencoded 라는 규격의 body 데이터를 손쉽게 코드에서 사용할 수 있게 도와주는 미들웨어이다.
-app.use(express.urlencoded({ extended: false })); 
-
 //body에 들어오는 json데이터를 parsing해주는 미들웨어
 app.use(express.json());
+//form-urlencoded 라는 규격의 body 데이터를 손쉽게 코드에서 사용할 수 있게 도와주는 미들웨어이다.
+app.use(express.urlencoded({ extended: false })); 
 
 
 const requestMiddleware = (req, res, next) => {  //requestMiddleware 미들웨어를 따로 함수처리하여 분리시켜 줌.

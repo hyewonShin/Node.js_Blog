@@ -1,17 +1,13 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
-    userDate: {
-        type: Date,
-        unique: true,
-    },
     id: { //회원가입/로그인시 사용 
         type: String,
         required: true, //필수적이어야 된다. 
        // unique: true,  //id이기 때문에 유니크(유일)해야된다.
     },
     password: {
-        type: Number,
+        type: String,
         required: true, //필수적이어야 된다. 
        // unique: true,  //id이기 때문에 유니크(유일)해야된다.
     },

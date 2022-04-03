@@ -3,7 +3,6 @@ const router = express.Router(); //exprees에서 제공하는 Router함수를 �
 const Blog = require("../schemas/blog"); // "./" = 현재 내 위치 / "../" = 내 위치에서 한단계 위
 const Comment = require("../schemas/comment"); 
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
-//const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
 const res = require("express/lib/response");
 const authMiddleware = require("../routes/auth-middleware");
 const CryptoJS = require("crypto-js");
@@ -73,6 +72,10 @@ router.post('/blogList', authMiddleware, async (req, res) => {
   const { subject, nick, password_write, content } = req.body;
   //console.log(borderDate, subject, nick, password_write, content); // ok
 
+// 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
+ const { user } = res.locals 
+ //console.log(user)  //ok
+
   const moment = require('moment'); 
   require('moment-timezone'); 
   moment.tz.setDefault("Asia/Seoul"); 
@@ -81,11 +84,17 @@ router.post('/blogList', authMiddleware, async (req, res) => {
 
   const PostId = CryptoJS.SHA256(NowDate)['words'][0];
   //console.log(PostId) //ok
+
+  // 해당 댓글의 ID가 DB에 있는지 조회
   const existPostId = await Blog.find({ PostId });
+  // const UserId = user._id.toString()
+  const UserId = user.id
+ // console.log(UserId) //ok
+
 
   //유효성 검사
   if (existPostId.length == 0) {
-    await Blog.create({ NowDate, PostId, subject, content, nick, password_write });
+    await Blog.create({ NowDate, PostId, subject, content, nick, password_write, UserId });
   }
   res.send({ result: "success" });
 });
@@ -120,8 +129,6 @@ router.delete("/blogList/:PostId", async (req, res) => {
 
 
 
-
-// 태성님 코드 : comment//
 // 댓글 >> DB로 올리기 (완료)
 router.post("/postingComment", authMiddleware, async (req, res) => {
   const { comment, PostId } = req.body
@@ -172,21 +179,15 @@ router.get("/lookupComment/:PostId", async (req, res) => {
 
 // 댓글 수정버튼 누르면 인증미들웨어로 보내서 검증하기
 router.post("/updateCommentAuth", authMiddleware, async (req, res) => {
-   const { CommentId, PostId } = req.body
+   //const { CommentId, PostId } = req.body
 
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
    const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
-  
+  console.log(user);
   // console.log({ CommentId, PostId, user }) //넘어옴 
 
   res.send("인정합니당")
 })
-
-// 댓글 수정페이지html 내려주기
-// router.get("/updateComment", (req, res) => {
-//   const path = require("path")
-//   res.sendFile(path.join(__dirname + '/../public/updateComment.html'))
-// })
 
 // 댓글 수정전 원본데이터 내려주기
 router.get("/updateCommentData", async (req, res) => {
@@ -205,6 +206,10 @@ router.get("/updateCommentData", async (req, res) => {
 // 댓글 수정하기
 router.post("/updateComment", async (req, res) => {
   const { CommentId, PostId, comment } = req.body
+
+  if (!comment.length) {
+    return res.json({ msg: "댓글 내용이 없습니다. 작성후 등록해 주세요." }) //ok
+  }
 
   //console.log(CommentId, PostId, comment)  //ok
 
