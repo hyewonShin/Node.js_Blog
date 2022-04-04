@@ -53,9 +53,45 @@
   }
 
 
-function modify_detail(blogList) {
-  location.href = "modify?PostId=" + PostId
-}
+
+// 글수정 // 인증미들웨어에 콜하기
+function modify_auth() {
+    $.ajax({
+      type: 'POST',
+      url: 'modifyAuth',
+      contentType: "application/json",
+      xhrFields: { withCredentials: true },
+      data: JSON.stringify({}),
+      success: function (response) {
+        location.href = "modify?PostId=" + PostId
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        alert("로그인이 필요한 기능입니다.")
+        window.location.replace("/user/login");
+      },
+    })
+  }
+
+ 
+// 글삭제 // 인증미들웨어에 콜하기
+function remove_auth() {
+    $.ajax({
+      type: 'POST',
+      url: 'remove_auth',
+      contentType: "application/json",
+      xhrFields: { withCredentials: true },
+      data: JSON.stringify({}),
+      success: function (response) {
+         remove_validation();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        alert("로그인이 필요한 기능입니다.")
+        window.location.replace("/user/login");
+      },
+    })
+  }
+
+
 
   function remove_validation() {
     $.ajax({
@@ -78,6 +114,7 @@ function modify_detail(blogList) {
     });
   }
 
+
   function remove() {
     $.ajax({
       type: "DELETE",
@@ -87,7 +124,7 @@ function modify_detail(blogList) {
         if (response["result"] == "success") {
           location.href = "/blog/list"
         }
-      }
+    },
     });
   }
 
@@ -162,6 +199,9 @@ function modify_detail(blogList) {
     $.ajax({
       type: 'POST',
       url: 'postingComment',
+      headers: {
+      authorization: `${localStorage.getItem("token")}`,
+      },
       contentType: "application/json",
       xhrFields: { withCredentials: true },
       data: JSON.stringify({
@@ -174,9 +214,9 @@ function modify_detail(blogList) {
         window.location.reload()
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        alert(jqXHR.responseText)
-        window.location.reload()
-      }
+        alert("로그인이 필요한 기능입니다.")
+        window.location.replace("/user/login");
+      },
     })
   }
 
@@ -212,12 +252,12 @@ function modify_detail(blogList) {
   <div id="detailAppend" name="detailAppend">
 
     <div class="btncls">
-      <button class="btn btn-primary" type="submit" onclick="modify_detail()">수정</button></br></br>
+      <button class="btn btn-primary" type="submit" onclick="modify_auth()">수정</button></br></br>
 
     </div>
     <a></a>비밀번호를 입력하세요</a></br>
     <input class="inputPwd" id="password_write" type="number" placeholder="숫자를 입력하세요" />
-    <button class="btn btn-primary" type="submit" onclick="remove_validation()">삭제</button>
+    <button class="btn btn-primary" type="submit" onclick="remove_auth()">삭제</button>
   </div>
 
 

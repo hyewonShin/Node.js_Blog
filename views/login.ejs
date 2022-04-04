@@ -27,6 +27,9 @@
     $.ajax({
       type: "POST",
       url: "/user/auth",
+      headers: {
+            authorization: `${localStorage.getItem("token")}`,
+        },
       contentType: "application/json",
       xhrFields: { withCredentials: true },
       data: JSON.stringify(

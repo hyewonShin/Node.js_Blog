@@ -23,7 +23,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
     function post_write() {
-
       $.ajax({
         type: "POST",
         url: `/blog/blogList`,
@@ -34,7 +33,6 @@
           nick: $("#nick").val(),
           password_write: $("#password_write").val(),
           content: $("#content").val(),
-    
         },
         success: function (response) {
           if (response['result'] == "success") {
@@ -42,6 +40,10 @@
             location.href = "/blog/list"
           }
         },
+        error: function (jqXHR, textStatus, errorThrown) {
+        alert("로그인이 필요한 기능입니다.")
+        location.href = "/user/login"
+      },
       });
     }
 

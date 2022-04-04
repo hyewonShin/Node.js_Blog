@@ -26,6 +26,7 @@
             $.ajax({
                 type: 'GET',
                 url: `/blog/updateCommentData?PostId=${PostId}&CommentId=${CommentId}`,
+              
                 dataType: 'json',
                 data: {},
 
@@ -74,6 +75,9 @@
             $.ajax({
                 type: 'POST',
                 url: '/blog/updateComment',
+                headers: {
+                authorization: `${localStorage.getItem("token")}`,
+                },
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
                 data: JSON.stringify({ 
@@ -102,6 +106,9 @@
             $.ajax({
                 type: 'POST',
                 url: '/blog/deleteComment',
+                headers: {
+                authorization: `${localStorage.getItem("token")}`,
+                },
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
                 data: JSON.stringify({ 
