@@ -100,8 +100,24 @@ router.post("/auth", async (req, res) => {
 
     const token = jwt.sign({ userId: user.userId }, "seceret_my_key");
     //응답값으로 클라에게 토큰 보내줌 
-    res.cookie('token', token).send({ msg: "로그인이 완료 되었습니다." })
+   // res.cookie('token', token).send({ msg: "로그인이 완료 되었습니다." })
+    res.send({token});
+});
 
+
+
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const {user} = res.locals;
+        //console.log(user)
+        res.send({user});
+    } catch (error) {
+        console.log(`${req.method} ${req.originalUrl} : ${error.message}`);
+        res.status(400).send(
+            {errorMessage: "사용자 정보를 가져오지 못하였습니다."}
+        );
+        return;
+    }
 });
 
 

@@ -25,9 +25,6 @@
         $.ajax({
             type: "GET",
             url: `blogList/${PostId}`,
-            headers: {
-            authorization: `${localStorage.getItem("token")}`,
-          },
             data: {},
             success: function (response) {
                 let blogList = response["blogList"];

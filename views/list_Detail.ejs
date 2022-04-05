@@ -11,6 +11,7 @@
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
 <script>
   //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
   let PostId = new URLSearchParams(location.search).get('PostId')
@@ -199,9 +200,6 @@ function remove_auth() {
     $.ajax({
       type: 'POST',
       url: 'postingComment',
-      headers: {
-      authorization: `${localStorage.getItem("token")}`,
-      },
       contentType: "application/json",
       xhrFields: { withCredentials: true },
       data: JSON.stringify({
