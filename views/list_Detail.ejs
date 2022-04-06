@@ -17,10 +17,17 @@
   let PostId = new URLSearchParams(location.search).get('PostId')
   // console.log(PostId); //ok 
 
-  $(document).ready(function () { //주석
-    get_detail()
+
+  $(document).ready(function () {
+    get_detail();
     call_comment();
-  });
+       if (!localStorage.getItem("token")) {
+           // 토큰이 없을 경우 게시글 작성 hide
+           $('#modifyBtn').hide()
+           $('#removeBox').hide()
+           
+        } 
+    });
 
 
   function get_detail() {
@@ -53,27 +60,12 @@
     })
   }
 
+  function modifyPost() {
+       // const postId = location.pathname.split("/")[2]
+       location.href = "modify?PostId=" + PostId
+    }
 
 
-// 글수정 // 인증미들웨어에 콜하기
-function modify_auth() {
-    $.ajax({
-      type: 'POST',
-      url: 'modifyAuth',
-      contentType: "application/json",
-      xhrFields: { withCredentials: true },
-      data: JSON.stringify({}),
-      success: function (response) {
-        location.href = "modify?PostId=" + PostId
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert("로그인이 필요한 기능입니다.")
-        window.location.replace("/user/login");
-      },
-    })
-  }
-
- 
 // 글삭제 // 인증미들웨어에 콜하기
 function remove_auth() {
     $.ajax({
@@ -228,8 +220,7 @@ function remove_auth() {
       contentType: "application/json",
       xhrFields: { withCredentials: true },
       data: JSON.stringify({
-        CommentId: CommentId,
-        PostId: PostId,
+
       }),
 
       success: function (response) {
@@ -246,17 +237,19 @@ function remove_auth() {
 
 
 <body>
-  <!-- 상세페이지 컨트롤 -->
-  <div id="detailAppend" name="detailAppend">
-
-    <div class="btncls">
-      <button class="btn btn-primary" type="submit" onclick="modify_auth()">수정</button></br></br>
-
-    </div>
+  <div id="removeBox">
     <a></a>비밀번호를 입력하세요</a></br>
     <input class="inputPwd" id="password_write" type="number" placeholder="숫자를 입력하세요" />
-    <button class="btn btn-primary" type="submit" onclick="remove_auth()">삭제</button>
+    <button class="btn btn-primary" id="removebBtn" type="submit" onclick="remove_auth()">삭제</button>
   </div>
+
+  <!-- 상세페이지 컨트롤 -->
+  <div id="detailAppend" name="detailAppend">
+    <div class="btncls">
+      <button class="btn btn-primary" id="modifyBtn" type="submit"  onclick="modifyPost()">수정</button></br></br>
+    </div>
+  </div>
+
 
 
   <!-- 댓글 작성 -->

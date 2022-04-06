@@ -29,10 +29,9 @@
       xhrFields: { withCredentials: true },
       data: JSON.stringify({ id, password }),
       success: function (response) {
-        console.log(response)
+        //서버에서 보내준 token을 브라우저 로컬스토리지로 전달. 
         localStorage.setItem("token", response.token)
-        // console.log(localStorage) //Storage {token: 'undefined', length: 1}
-        alert(response["msg"])
+        alert("로그인이 완료되었습니다!")
         window.location.replace("/blog/list");
       },
       error: function (xhr, ajaxSettings, thrownError) {

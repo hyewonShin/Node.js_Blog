@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
-const cookieParser = require('cookie-parser')
+//const cookieParser = require('cookie-parser')
 
 // 포트 연결 
 const connect = require("./schemas");  ///schemas의 index.js
@@ -34,11 +34,12 @@ const requestMiddleware = (req, res, next) => {  //requestMiddleware 미들웨�
 app.use(requestMiddleware);
 
 
-app.use(cookieParser());
+//app.use(cookieParser());
 const userRouter = require("./routes/user");   
 app.use("/user", userRouter);
 const blogRouter = require("./routes/blog");   
 app.use("/blog", blogRouter); 
+
 
 
 // cors 해결하기
@@ -46,7 +47,7 @@ const cors = require("cors");
 app.use(cors());
 
 // cookie Parser 하기
-app.use(cookieParser());
+//app.use(cookieParser());
 
 
 

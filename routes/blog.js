@@ -69,19 +69,6 @@ router.get("/blogList", async (req, res, next) => {
 });
 
 
-
-//글작성 버튼 누르면 인증미들웨어로 보내서 검증하기
-router.post("/updatePostAuth", authMiddleware, async (req, res) => {
-
- // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
-  const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
-  console.log(user);
- // console.log({ CommentId, PostId, user }) //넘어옴 
-
- res.send("인정합니당")
-})
-
-
 // 게시글 작성 페이지 //저장됌 
 router.post('/blogList', authMiddleware, async (req, res) => {
   //작성한 정보 가져옴
@@ -96,8 +83,8 @@ router.post('/blogList', authMiddleware, async (req, res) => {
   require('moment-timezone'); 
   moment.tz.setDefault("Asia/Seoul"); 
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
-  //console.log(NowDate); //ok
 
+  //현재시각을 암호화하여 PostId생성 
   const PostId = CryptoJS.SHA256(NowDate)['words'][0];
   //console.log(PostId) //ok
 
@@ -116,19 +103,9 @@ router.post('/blogList', authMiddleware, async (req, res) => {
 });
 
 
-//게시글 수정버튼 누르면 인증미들웨어로 보내서 검증하기
-router.post("/modifyAuth", authMiddleware, async (req, res) => {
- // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
-  const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
-  //console.log(user);
- // console.log({ CommentId, PostId, user }) //넘어옴 
-
- res.send("인정합니당")
-})
-
 
 // 수정 페이지
-router.patch("/blogList/:PostId", authMiddleware, async (req, res) => {
+router.patch("/blogList/:PostId",  authMiddleware, async (req, res) => {
  
   const { PostId } = req.params;
   const { nick, subject, content } = req.body;

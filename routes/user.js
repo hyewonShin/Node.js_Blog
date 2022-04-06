@@ -110,7 +110,8 @@ router.get('/me', authMiddleware, async (req, res) => {
     try {
         const {user} = res.locals;
         //console.log(user)
-        res.send({user});
+        //미들웨어 통과시 사용자정보를 클라에게 전달한다. 
+        res.send({user});  
     } catch (error) {
         console.log(`${req.method} ${req.originalUrl} : ${error.message}`);
         res.status(400).send(
@@ -120,7 +121,4 @@ router.get('/me', authMiddleware, async (req, res) => {
     }
 });
 
-
-
 module.exports = router;
-
