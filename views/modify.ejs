@@ -17,40 +17,20 @@
   //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
   let PostId = new URLSearchParams(location.search).get('PostId')
 
-    $(document).ready(function () {
-        get_detail()
+    $(document).ready(function() {
+        getSelf();
+        get_detail();
     })
 
-    //상세페이지 정보
-    function get_detail() {
-        $.ajax({
-            type: "GET",
-            url: `blogList/${PostId}`,
-            data: {},
-            headers: {
-                 authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            success: function (response) {
-                let blogList = response["blogList"];
-                //console.log(blogList) //값 넘어옴
-                let password_write = blogList['password_write'];
-
-                $("#subject").val(blogList["subject"]);
-                $("#nick").val(blogList["nick"]);
-                $("#content").val(blogList["content"]);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("로그인이 필요한 기능입니다.")
-                location.href = "/blog/list"
-             },
-        });
-    }
 
     function getSelf(callback) {
     $.ajax({
         type: "GET",
         url: "/user/me",
         //로그인되어있는 상태라면 브라우저의 로컬스토리지로부터 token을 받아온다.
+        headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         data: {},
         success: function (response) {
             callback(response.user);
@@ -70,14 +50,30 @@
     });
 }
 
+    //상세페이지 정보
+    function get_detail() {
+        $.ajax({
+            type: "GET",
+            url: `blogList/${PostId}`,
+            data: {},
+            success: function (response) {
+                let blogList = response["blogList"];
+                //console.log(blogList) //값 넘어옴
+                let password_write = blogList['password_write'];
+
+                $("#subject").val(blogList["subject"]);
+                $("#nick").val(blogList["nick"]);
+                $("#content").val(blogList["content"]);
+            },
+        });
+    }
+
+
     function modify_validation() {
         $.ajax({
             type: "GET",
             url: `blogList/${PostId}`,
             data: {},
-            headers: {
-                 authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
             success: function (response) {
                 let blogList = response["blogList"];
                 //db에 저장된 비밀번호 가져오기
@@ -94,7 +90,7 @@
         });
     }
   
-    
+    // 게시글 수정하기
     function modify() {
         $.ajax({
             type: "PATCH",
@@ -111,10 +107,9 @@
                     window.location.href = "/blog/list"
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("로그인이 필요한 기능입니다.")
-                location.href = "/blog/list"
-             },
+            error: function (xhr, ajaxSettings, thrownError) {
+                alert("게시글 내용을 입력해주세요.")
+            },
         });
     }
 

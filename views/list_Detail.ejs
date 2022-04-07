@@ -21,13 +21,11 @@
   $(document).ready(function () {
     get_detail();
     call_comment();
-       if (!localStorage.getItem("token")) {
-           // 토큰이 없을 경우 게시글 작성 hide
-           $('#modifyBtn').hide()
-           $('#removeBox').hide()
-           
-        } 
-    });
+    if (!localStorage.getItem("token")) {
+      $('#modifyBtn').hide()
+      $('#removeBox').hide()
+    }
+  });
 
 
   function get_detail() {
@@ -61,27 +59,7 @@
   }
 
   function modifyPost() {
-       // const postId = location.pathname.split("/")[2]
-       location.href = "modify?PostId=" + PostId
-    }
-
-
-// 글삭제 // 인증미들웨어에 콜하기
-function remove_auth() {
-    $.ajax({
-      type: 'POST',
-      url: 'remove_auth',
-      contentType: "application/json",
-      xhrFields: { withCredentials: true },
-      data: JSON.stringify({}),
-      success: function (response) {
-         remove_validation();
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert("로그인이 필요한 기능입니다.")
-        window.location.replace("/user/login");
-      },
-    })
+    location.href = "modify?PostId=" + PostId
   }
 
 
@@ -98,7 +76,7 @@ function remove_auth() {
         let password_write = blogList['password_write']
         //비밀번호 입력창에 입력한 값과 db로 가져온 pwd를 비교하여 검사
         if (password_write === Number($("#password_write").val())) {
-          remove()
+          remove();
         }
         else {
           alert("비밀번호가 다릅니다.");
@@ -113,20 +91,31 @@ function remove_auth() {
       type: "DELETE",
       url: `blogList/${PostId}`,
       data: {},
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       success: function (response) {
         if (response["result"] == "success") {
           location.href = "/blog/list"
+          removeCheck();
         }
-    },
+      },
     });
   }
+
+  // 삭제하는지 한번 더 확인해주기. 
+  function removeCheck() {
+    if (confirm("정말 삭제하시겠습니까??") == true) {    //확인
+      remove();
+    } else {   //취소
+      location.href = "/blog/list"
+    }
+  }
+
 
 
   // 댓글 보여주기 
   function call_comment() {
-    //이 페이지가 랜딩되고 있는 url의 쿼리스트링 가져오기
-    let PostId = new URLSearchParams(location.search).get('PostId')
-
     $.ajax({
       type: 'GET',
       url: `lookupComment/${PostId}`,
@@ -170,7 +159,8 @@ function remove_auth() {
                                             </div>
                                             <!-- 버튼 -->
                                             <div class="col-lg-2" style="padding: 15px; margin: auto">
-                                                <button type="button" onclick="update_comment_auth(${CommentId})">수정</button>
+                                              <button type="button" onclick="redirectModifyComment(${CommentId})">수정</button>
+                                                                
                                             </div>
                                         </div>
                                     </div>
@@ -181,12 +171,10 @@ function remove_auth() {
         }
       }
     })
-
   }
 
   // 댓글작성
   function posting_comment_auth() {
-    let PostId = new URLSearchParams(location.search).get('PostId')
     let comment = $("#comment").val()
 
     $.ajax({
@@ -194,11 +182,10 @@ function remove_auth() {
       url: 'postingComment',
       contentType: "application/json",
       xhrFields: { withCredentials: true },
-      data: JSON.stringify({
-        comment: comment,
-        PostId: PostId,
-      }),
-
+      data: JSON.stringify({ comment, PostId}),
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       success: function (response) {
         alert(response["msg"])
         window.location.reload()
@@ -210,27 +197,10 @@ function remove_auth() {
     })
   }
 
-  // 댓글수정기능 // 인증미들웨어에 콜하기
-  function update_comment_auth(CommentId) {
-    let PostId = new URLSearchParams(location.search).get('PostId')
 
-    $.ajax({
-      type: 'POST',
-      url: 'updateCommentAuth',
-      contentType: "application/json",
-      xhrFields: { withCredentials: true },
-      data: JSON.stringify({
-
-      }),
-
-      success: function (response) {
-        document.location.href = `/blog/modifyComment?CommentId=${CommentId}&PostId=${PostId}`
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert("로그인이 필요한 기능입니다.")
-        window.location.replace("/user/login");
-      },
-    })
+  function redirectModifyComment(CommentId) {
+    document.location.href = `/blog/modifyComment?CommentId=${CommentId}&PostId=${PostId}`
+  
   }
 </script>
 
@@ -240,13 +210,13 @@ function remove_auth() {
   <div id="removeBox">
     <a></a>비밀번호를 입력하세요</a></br>
     <input class="inputPwd" id="password_write" type="number" placeholder="숫자를 입력하세요" />
-    <button class="btn btn-primary" id="removebBtn" type="submit" onclick="remove_auth()">삭제</button>
+    <button class="btn btn-primary" id="removebBtn" type="submit" onclick="remove_validation()">삭제</button>
   </div>
 
   <!-- 상세페이지 컨트롤 -->
   <div id="detailAppend" name="detailAppend">
     <div class="btncls">
-      <button class="btn btn-primary" id="modifyBtn" type="submit"  onclick="modifyPost()">수정</button></br></br>
+      <button class="btn btn-primary" id="modifyBtn" type="submit" onclick="modifyPost()">수정</button></br></br>
     </div>
   </div>
 

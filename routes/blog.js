@@ -57,16 +57,20 @@ router.get("/blogList", async (req, res, next) => {
 }); 
 
 
+
+
  //상세조회 페이지 
  router.get("/blogList/:PostId",async (req, res) => {
   //주소에 PostId를 파라미터값으로 가져옴
   const { PostId }  = req.params;
   //console.log(PostId); //ok 
 
-  blogList = await Blog.findOne({PostId: PostId});
+  blogList = await Blog.findOne({PostId});
   //detail 값으로 넘겨줌
   res.json({ blogList: blogList });
 });
+
+
 
 
 // 게시글 작성 페이지 //저장됌 
@@ -94,7 +98,6 @@ router.post('/blogList', authMiddleware, async (req, res) => {
   const UserId = user.id
  // console.log(UserId) //ok
 
-
   //유효성 검사
   if (existPostId.length == 0) {
     await Blog.create({ NowDate, PostId, subject, content, nick, password_write, UserId });
@@ -104,11 +107,18 @@ router.post('/blogList', authMiddleware, async (req, res) => {
 
 
 
+
 // 수정 페이지
-router.patch("/blogList/:PostId",  authMiddleware, async (req, res) => {
+router.patch("/blogList/:PostId", async (req, res) => {
  
   const { PostId } = req.params;
   const { nick, subject, content } = req.body;
+
+  //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기. 
+   if (!content.length) {
+    res.status(401).send();  //401 : 인증실패
+    return;
+  }
 
   isBorder = await Blog.find({ PostId });
   if (isBorder.length) {
@@ -118,15 +128,6 @@ router.patch("/blogList/:PostId",  authMiddleware, async (req, res) => {
 })
 
 
-//게시글 삭제버튼 누르면 인증미들웨어로 보내서 검증하기
-router.post("/remove_auth", authMiddleware, async (req, res) => {
- // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
- const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
- //console.log(user);
- // console.log({ CommentId, PostId, user }) //넘어옴 
-
- res.send("인정합니당")
-})
 
 
 // 게시글 삭제 
@@ -138,7 +139,6 @@ router.delete("/blogList/:PostId", authMiddleware, async (req, res) => {
   }
   res.send({ result: "success" });
 });
-
 
 
 
@@ -181,6 +181,7 @@ router.post("/postingComment", authMiddleware, async (req, res) => {
 
 
 
+
 // DB >> 댓글 보여주기
 router.get("/lookupComment/:PostId", async (req, res) => {
     //주소에 PostId를 파라미터값으로 가져옴
@@ -191,17 +192,6 @@ router.get("/lookupComment/:PostId", async (req, res) => {
   res.json(sorted_total_ls);
 })
 
-// 댓글 수정버튼 누르면 인증미들웨어로 보내서 검증하기
-router.post("/updateCommentAuth", authMiddleware, async (req, res) => {
-   //const { CommentId, PostId } = req.body
-
-  // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
-   const { user } = res.locals // NickName: ##, Pw: ##, _id: ##
-  console.log(user);
-  // console.log({ CommentId, PostId, user }) //넘어옴 
-
-  res.send("인정합니당")
-})
 
 // 댓글 수정전 원본데이터 내려주기
 router.get("/updateCommentData", async (req, res) => {
@@ -216,8 +206,6 @@ router.get("/updateCommentData", async (req, res) => {
  // console.log(Comment_info) //ok
   res.json(Comment_info);
 });
-
-
 
 
 
@@ -250,6 +238,9 @@ router.post("/updateComment", async (req, res) => {
   
 })
 
+
+
+
 // 댓글 삭제하기
 router.post("/deleteComment", async (req, res) => {
   const { CommentId, PostId, comment } = req.body
@@ -272,7 +263,6 @@ router.post("/deleteComment", async (req, res) => {
   await Comment.deleteOne({ CommentId } )
   
 })
-
 
 
 // app.js에서 사용하기위해 밖으로 내보내줌.

@@ -18,11 +18,16 @@
   <input type="text" id="password_write" name="password_write"></br>
   <label>작성 내용</label>
   <input type="textarea" id="content" name="content"></br>
-  <button onclick="post_write();">글쓰기</button>
+  <button onclick="post_write();">확인</button>
   <button type="button" class="btn btn-secondary" onclick="location.href='/blog/list'">취소</button>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
+
+    $(document).ready(function () {
+      getSelf();
+      
+      });
 
     function getSelf(callback) {
       $.ajax({
@@ -45,7 +50,7 @@
                   localStorage.clear();
                   alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의 하세요.");
               }
-              window.location.href = "/";
+              window.location.href = "/user/login";
           },
       });
   }
@@ -76,7 +81,6 @@
       },
       });
     }
-
   </script>
 </body>
 

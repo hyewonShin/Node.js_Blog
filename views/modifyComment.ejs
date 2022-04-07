@@ -11,8 +11,37 @@
     <title>댓글 수정중!!</title>
     <script>
         $(document).ready(function () {
+            getSelf();
             call_raw_info();
         });
+
+
+        function getSelf(callback) {
+            $.ajax({
+            type: "GET",
+            url: "/user/me",
+            data: {},
+            //로그인되어있는 상태라면 브라우저의 로컬스토리지로부터 token을 받아온다.
+            headers: {
+                authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            success: function (response) {
+                callback(response.user);
+                console.log(response)  //사용자정보를 받는다
+            },
+            error: function (error) {
+                const {status} = error;
+                if (status == 401) {
+                    alert("로그인이 필요 합니다.");
+                } else {
+                    //문제가 발생하였을 경우 현재 localStorage에 있는 데이터를 전부 삭제한다.
+                    localStorage.clear();
+                    alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의 하세요.");
+                }
+                window.location.href = "/user/login";
+            },
+         });
+    }
 
         // 댓글 원본정보 뿌려주기
         function call_raw_info() {
@@ -22,7 +51,6 @@
             //console.log(PostId);  //ok
             //console.log(CommentId);   //ok
  
-
             $.ajax({
                 type: 'GET',
                 url: `/blog/updateCommentData?PostId=${PostId}&CommentId=${CommentId}`,
@@ -56,7 +84,7 @@
                                         </div>
                                         <button type="submit"  onclick="updateComment()">수정 완료하기</button>
                                         <button type="submit"  onclick="confirmComment()">삭제 완료하기</button>
-                                        <button type="button"  onclick="location.href='/'">취소</button>
+                                        <button type="button"  onclick="window.location = document.referrer; ">취소</button>
                                     `
                     $('#editRawInfo').append(temp_html)                
                     }
@@ -71,17 +99,12 @@
             let comment = $("#comment").val()
             let myURL = new URLSearchParams(location.search)
 
-
             $.ajax({
                 type: 'POST',
                 url: '/blog/updateComment',
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
-                data: JSON.stringify({ 
-                    CommentId: CommentId,
-                    PostId: PostId,
-                    comment: comment,
-                }),
+                data: JSON.stringify({ CommentId, PostId, comment }),
 
                 success: async function (response) {
                     alert(response["msg"])
@@ -94,7 +117,8 @@
             })
 
         }
-        
+
+
         // 댓글 삭제하기
         function deleteComment() {
             let PostId = new URLSearchParams(location.search).get('PostId')
@@ -113,7 +137,8 @@
 
                 success: function (response) {
                     alert(response["msg"])
-                    window.location = document.referrer; //뒤로가고 새로고침
+                    //location.href = "/blog/list_Detail"
+                    window.location = document.referrer; 
                 },
                 error: function (err) {
                     alert(response["실패했어요"])
@@ -129,7 +154,7 @@
         } else {
             alert("취소(아니오)를 누르셨습니다.");
         }
-        }
+    }
    </script>
 </head>
 

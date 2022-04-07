@@ -18,6 +18,12 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+  $(document).ready(function () {
+       if (localStorage.getItem("token")) {
+           alert("이미 로그인이 되어있습니다.")
+           window.location.replace("/blog/list");
+        } 
+  });
 
   function sign_in() {
     let id = $("#id").val();
@@ -29,13 +35,13 @@
       xhrFields: { withCredentials: true },
       data: JSON.stringify({ id, password }),
       success: function (response) {
-        //서버에서 보내준 token을 브라우저 로컬스토리지로 전달. 
+        //서버로부터 받은  token을 브라우저 로컬스토리지로 전달. 
         localStorage.setItem("token", response.token)
         alert("로그인이 완료되었습니다!")
         window.location.replace("/blog/list");
       },
       error: function (xhr, ajaxSettings, thrownError) {
-        alert("닉네임 혹은 패스워드를 다시 확인해주세요.")
+        alert("아이디 혹은 패스워드를 다시 확인해주세요.")
       },
     });
   }

@@ -83,24 +83,19 @@ router.post("/users", async (req, res) => {
 //로그인 유효성 검사 및 토큰 발급 
 router.post("/auth", async (req, res) => {
     const { id, password } = req.body;
-    // console.log(id, password); //값 들어옴 
+     //console.log(id, password); //값 들어옴 
 
     //exec() 메소드는 일치 검색을 실행합니다. 결과 배열 또는 null 을 반환합니다 .
     // 클라가 입력한 정보로 DB조회 
-    const user = await User.findOne({ id }).exec();
+    const user = await User.findOne({ id }, {password}).exec();
     // console.log(user); // 값 들어옴 
 
     if (!user) {  //사용자가 없다면 
-        res.status(401).send({  //401 : 인증실패 
-            //브라우저 검사창(network->preview)에서 뜨는 메세지
-            errorMessage: '이메일 또는 패스워드가 잘못되었습니다.',
-        });
+        res.status(401).send();  //401 : 인증실패
         return;
     }
-
     const token = jwt.sign({ userId: user.userId }, "seceret_my_key");
-    //응답값으로 클라에게 토큰 보내줌 
-   // res.cookie('token', token).send({ msg: "로그인이 완료 되었습니다." })
+    //응답값으로 클라에게 토큰 생성해서 보내줌 
     res.send({token});
 });
 

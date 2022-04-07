@@ -20,12 +20,16 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    $(document).ready(function () {
+       if (localStorage.getItem("token")) {
+           alert("이미 로그인이 되어있습니다.")
+           window.location.replace("/blog/list");
+        } 
+    });
   function sign_up() {
-
     const id = $("#id").val();
     const password = $("#password").val();
     const password2 = $("#password2").val();
-
     $.ajax({
       type: "POST",
       url: "/user/users",
