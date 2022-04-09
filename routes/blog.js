@@ -109,10 +109,11 @@ router.post('/blogList', authMiddleware, async (req, res) => {
 
 
 // 수정 페이지
-router.patch("/blogList/:PostId", async (req, res) => {
+router.patch("/blogList/:PostId", authMiddleware,async (req, res) => {
  
   const { PostId } = req.params;
   const { nick, subject, content } = req.body;
+  //console.log(userId) //ok 
 
   //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기. 
    if (!content.length) {

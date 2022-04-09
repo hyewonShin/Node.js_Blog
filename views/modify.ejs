@@ -95,6 +95,9 @@
         $.ajax({
             type: "PATCH",
             url: `blogList/${PostId}`,
+            headers: {
+                 authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
             data: {
                 //바뀐 데이터
                 subject: $(subject).val(),
