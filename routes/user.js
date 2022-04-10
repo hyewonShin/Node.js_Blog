@@ -7,7 +7,6 @@ const res = require("express/lib/response");
 const authMiddleware = require("../routes/auth-middleware");
 
 
-
 //회원가입 페이지 연결 
 router.get('/sign_up', async (req, res) => {
     res.render('sign_up');
@@ -18,7 +17,6 @@ router.get('/sign_up', async (req, res) => {
 router.get('/login', (req, res) => {
     res.render('login');
 });
-
 
 
 
@@ -58,7 +56,7 @@ router.post("/users", async (req, res) => {
             return;
         }
 
-    //or 조건식을 사용하여 닉네임이나 이메일이 db에 있는지 확인. 
+    //or 조건식을 사용하여 가입된 아이디가 db에 있는지 확인. 
     const existUsers = await User.find({
         id,
     });
@@ -114,5 +112,8 @@ router.get('/me', authMiddleware, async (req, res) => {
         return;
     }
 });
+
+
+
 
 module.exports = router;
