@@ -31,18 +31,16 @@
     $.ajax({
       type: "POST",
       url: "/user/auth",
-      contentType: "application/json",
-      xhrFields: { withCredentials: true },
-      data: JSON.stringify({ id, password }),
+      data: ({ id, password }),
       success: function (response) {
         //서버로부터 받은  token을 브라우저 로컬스토리지로 전달. 
         localStorage.setItem("token", response.token)
-        localStorage.setItem("id", id);
         alert("로그인이 완료되었습니다!")
         window.location.replace("/blog/list");
       },
-      error: function (xhr, ajaxSettings, thrownError) {
-        alert("아이디 혹은 패스워드를 다시 확인해주세요.")
+      error: function (error) {
+       // alert("아이디 혹은 패스워드를 다시 확인해주세요.")
+       alert(error.responseJSON.errorMessage);
       },
     });
   }
