@@ -54,7 +54,6 @@
             $.ajax({
                 type: 'GET',
                 url: `/blog/updateCommentData?PostId=${PostId}&CommentId=${CommentId}`,
-              
                 dataType: 'json',
                 data: {},
 
@@ -68,7 +67,7 @@
                     let UserId = raws[i]["UserId"]
                     let PostId = raws[i]["PostId"]
                     let NowDate = raws[i]["NowDate"]
-
+                   
                     let temp_html = ` <div class="mb-3">
                                             <label for="exampleFormControlInput1" class="form-label">닉네임 : </label>
                                             <label for="exampleFormControlInput1" class="form-label">${UserId}</label>
@@ -86,7 +85,7 @@
                                         <button type="submit"  onclick="confirmComment()">삭제 완료하기</button>
                                         <button type="button"  onclick="window.location = document.referrer; ">취소</button>
                                     `
-                    $('#editRawInfo').append(temp_html)                
+                            $('#editRawInfo').append(temp_html)                
                     }
                 }
             })
@@ -105,6 +104,9 @@
                 contentType: "application/json",
                 xhrFields: { withCredentials: true },
                 data: JSON.stringify({ CommentId, PostId, comment }),
+                headers: {
+                authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
 
                 success: async function (response) {
                     alert(response["msg"])
@@ -112,7 +114,7 @@
                 },
 
                 error: function (err) {
-                    alert(response["실패했어요"])
+                    alert(response["msg"])
                 }
             })
 

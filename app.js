@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 
 
 //body에 들어오는 json데이터를 parsing해주는 미들웨어
+//json으로 넘어오는 값을 json으로 받아주는 역할.
 app.use(express.json());
 //form-urlencoded 라는 규격의 body 데이터를 손쉽게 코드에서 사용할 수 있게 도와주는 미들웨어이다.
 app.use(express.urlencoded({ extended: false })); 

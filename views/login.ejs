@@ -39,7 +39,6 @@
         window.location.replace("/blog/list");
       },
       error: function (error) {
-       // alert("아이디 혹은 패스워드를 다시 확인해주세요.")
        alert(error.responseJSON.errorMessage);
       },
     });
@@ -54,5 +53,4 @@
   <button type="button" onclick="sign_in()">로그인</button>
   <button type="button" onClick="location.href='sign_up'">회원가입</button>
 </body>
-
 </html>

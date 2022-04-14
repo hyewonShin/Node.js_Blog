@@ -47,7 +47,7 @@
 
         let temp_html = `<h1>글조회 페이지</h1>
                             <div>
-                              <h5> 글제목: ${subject}<h5>
+                              <h5>글제목: ${subject}<h5>
                               <h5>작성시간: ${NowDate}<h5>
                               <h5>작성자명: ${nick}<h5>
                               <h5>글내용: ${content}<h5>
@@ -120,54 +120,92 @@
       type: 'GET',
       url: `lookupComment/${PostId}`,
       contentType: "application/json",
+      xhrFields: { withCredentials: true },
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       data: {},
+      success: function(response) {
 
-      success: function (response) {
+       let tokenObject = response["user"]
+      
 
-        let raw = response //sorted_total_ls
+       let raw = response['sorted_total_ls'] //sorted_total_ls
         for (let i = 0; i < raw.length; i++) {
           let UserId = raw[i]['UserId'];
           let comment = raw[i]['comment'];
           let CommentId = raw[i]['CommentId']
-          let NowDate = raw[i]['NowDate'];
+          let NowDate = raw[i]['NowDate'];          
+               
 
-          let temp_html = `
-                                    <!-- 댓글 시작 -->
-                                    <div class="card" style="width: 1300px; padding: 15px;">
-                                        <div class="row">
-                                            <!-- 내용 -->
-                                            <div class="col-lg-3">
-                                                <div class="card-body">
-                                                ${comment}
-                                                </div>
-                                            </div>
-                                            <!-- 공백 -->
-                                            <div class="col-lg-1">
-                                     
-                                            </div>
-                                            <!-- 이름 -->
-                                            <div class="col-lg-2">
-                                                작성자: ${UserId}
-                                            </div>
-                                            <!-- 날짜 -->
-                                            <div class="col-lg-3" id="Date">
-                                                작성일자: ${NowDate}
-                                            </div>
-                                            <!-- 댓글ID -->
-                                            <div class="col-lg-1" id="${CommentId}">
-                                                댓글 고유ID: ${CommentId}
-                                            </div>
-                                            <!-- 버튼 -->
-                                            <div class="col-lg-2" style="padding: 15px; margin: auto">
-                                              <button type="button" onclick="redirectModifyComment(${CommentId})">수정</button>
-                                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p></p>
-                                    `
-
-          $('#commentAppend').append(temp_html)
+          if(UserId === tokenObject.id) {
+            let temp_html = `
+                                      <!-- 댓글 시작 -->
+                                      <div class="card" style="width: 1300px; padding: 15px;">
+                                          <div class="row">
+                                              <!-- 내용 -->
+                                              <div class="col-lg-3">
+                                                  <div class="card-body">
+                                                  ${comment}
+                                                  </div>
+                                              </div>
+                                              <!-- 공백 -->
+                                              <div class="col-lg-1">
+                                      
+                                              </div>
+                                              <!-- 이름 -->
+                                              <div class="col-lg-2">
+                                                  작성자: ${UserId}
+                                              </div>
+                                              <!-- 날짜 -->
+                                              <div class="col-lg-3" id="Date">
+                                                  작성일자: ${NowDate}
+                                              </div>
+                                              <!-- 댓글ID -->
+                                              <div class="col-lg-1" id="${CommentId}">
+                                                  댓글 고유ID: ${CommentId}
+                                              </div>
+                                              <!-- 버튼 -->
+                                              <div class="col-lg-2" style="padding: 15px; margin: auto">
+                                                <button type="button" onclick="redirectModifyComment(${CommentId})">수정</button>
+                                                                  
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <p></p>`
+                  $('#commentAppend').append(temp_html)
+          }else{
+            let temp_html = `
+                                      <!-- 댓글 시작 -->
+                                      <div class="card" style="width: 1300px; padding: 15px;">
+                                          <div class="row">
+                                              <!-- 내용 -->
+                                              <div class="col-lg-3">
+                                                  <div class="card-body">
+                                                  ${comment}
+                                                  </div>
+                                              </div>
+                                              <!-- 공백 -->
+                                              <div class="col-lg-1">
+                                      
+                                              </div>
+                                              <!-- 이름 -->
+                                              <div class="col-lg-2">
+                                                  작성자: ${UserId}
+                                              </div>
+                                              <!-- 날짜 -->
+                                              <div class="col-lg-3" id="Date">
+                                                  작성일자: ${NowDate}
+                                              </div>
+                                              <!-- 댓글ID -->
+                                              <div class="col-lg-1" id="${CommentId}">
+                                                  댓글 고유ID: ${CommentId}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <p></p>`
+                  $('#commentAppend').append(temp_html)
+         }
         }
       }
     })
