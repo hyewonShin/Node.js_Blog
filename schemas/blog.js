@@ -12,11 +12,6 @@ const blogSchema = mongoose.Schema({
     content: {
         type: String,
     },
-    PostId: {
-        type: String,
-        required: true,
-        //unique: true
-    },
     UserId: {
         type: String,
         required: true,
@@ -33,6 +28,12 @@ const blogSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+});
+blogSchema.virtual("PostId").get(function () {
+    return this._id.toHexString();
+});
+blogSchema.set('toJSON', {
+    virtuals: true,
 });
 
 // model에 담아서 exports를 사용해 밖으로 내보내준다.

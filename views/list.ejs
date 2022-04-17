@@ -69,7 +69,7 @@
             success: function (response) {
                 //routes에서 보내준 값 받음. 
                  let blogList = response["blogList"]
-                    //console.log(blogList); //ok
+                   console.log(blogList); //ok
 
                  for (i = 0; i < blogList.length; i++) {
                 let subject = blogList[i]["subject"]
@@ -80,7 +80,7 @@
                 let PostId = blogList[i]["PostId"]
                 let UserId = blogList[i]["UserId"]
 
-               // console.log(subject, nick, content, UserId); //ok
+                //console.log(subject, nick, content, UserId, PostId); //ok
 
                 let htmlTemp = `<tr>
                              <td><a href='list_Detail?PostId=${PostId}'>${subject}</a></td>

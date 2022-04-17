@@ -131,11 +131,13 @@
       
 
        let raw = response['sorted_total_ls'] //sorted_total_ls
+       console.log(raw)   
         for (let i = 0; i < raw.length; i++) {
           let UserId = raw[i]['UserId'];
           let comment = raw[i]['comment'];
           let CommentId = raw[i]['CommentId']
-          let NowDate = raw[i]['NowDate'];          
+          let NowDate = raw[i]['NowDate'];       
+        
                
 
           if(UserId === tokenObject.id) {
@@ -163,7 +165,7 @@
                                               </div>
                                               <!-- 댓글ID -->
                                               <div class="col-lg-1" id="${CommentId}">
-                                                  댓글 고유ID: ${CommentId}
+                                                댓글 고유ID: ${CommentId}
                                               </div>
                                               <!-- 버튼 -->
                                               <div class="col-lg-2" style="padding: 15px; margin: auto">
@@ -199,7 +201,7 @@
                                               </div>
                                               <!-- 댓글ID -->
                                               <div class="col-lg-1" id="${CommentId}">
-                                                  댓글 고유ID: ${CommentId}
+                                                댓글 고유ID: ${CommentId}
                                               </div>
                                           </div>
                                       </div>

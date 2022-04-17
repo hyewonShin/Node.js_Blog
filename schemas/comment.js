@@ -2,14 +2,13 @@ const mongoose = require("mongoose");
 
 
 const commentSchema = mongoose.Schema({
-    comment: {
+    CommentId: {
         type: String,
         
     },
-    CommentId: {
+    comment: {
         type: String,
-        required: true,
-        //unique: true,
+        
     },
     UserId: {
         type: String,
@@ -24,6 +23,12 @@ const commentSchema = mongoose.Schema({
         required: true,
     }
 });
+// commentSchema.virtual("CommentId").get(function () {
+//     return this._id.toHexString();
+// });
+// commentSchema.set('toJSON', {
+//     virtuals: true,
+// });
 
 
 module.exports = mongoose.model("Comment", commentSchema);
