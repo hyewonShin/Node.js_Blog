@@ -1,6 +1,7 @@
 /mini_key.pem
 /config
 /.env
+
 # Logs
 logs
 *.log

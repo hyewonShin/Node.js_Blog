@@ -1,9 +1,37 @@
 const fs = require('fs');
 const express = require('express');
+var http = require('http');
 const app = express();
 const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
 //const cookieParser = require('cookie-parser')
 
+// ejs 설정 
+const ejs = require('ejs');
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
+//GET이라는 HTTP메서드로 아래 경로로 요청이 들어왔다.(app.get)
+app.get('/', function(req, res){
+	res.render('index');
+});
+
+io.on('connection', (socket) => {   //연결이 들어오면 실행되는 이벤트
+  // socket 변수에는 실행 시점에 연결한 상대와 연결된 소켓의 객체가 들어있다.
+  
+  //socket.emit으로 현재 연결한 상대에게 신호를 보낼 수 있다.
+  socket.emit('usercount', io.engine.clientsCount);
+
+  // on 함수로 이벤트를 정의해 신호를 수신할 수 있다.
+  socket.on('message', (msg) => {
+      //msg에는 클라이언트에서 전송한 매개변수가 들어온다. 이러한 매개변수의 수에는 제한이 없다.
+      console.log('Message received: ' + msg);
+
+      // io.emit으로 연결된 모든 소켓들에 신호를 보낼 수 있다.
+      io.emit('message', msg);
+  });
+});
 
 
 require("dotenv").config();
@@ -12,16 +40,6 @@ const connect = require("./schemas");  ///schemas의 index.js
 const port = 4000;
 connect();
 
-// ejs 설정 
-const ejs = require('ejs');
-app.set('view engine', 'ejs');
-app.set('views', './views');
-
-
-//GET이라는 HTTP메서드로 아래 경로로 요청이 들어왔다.(app.get)
-app.get('/', function(req, res){
-	res.render('login');
-});
 
 
 //body에 들어오는 json데이터를 parsing해주는 미들웨어
@@ -57,7 +75,7 @@ app.use(cors());
 
 
 //서버구동 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(port, '포트로 서버가 열렸어요!');
   });
 
