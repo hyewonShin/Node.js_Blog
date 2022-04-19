@@ -4,9 +4,9 @@ const Blog = require("../schemas/blog"); // "./" = 현재 내 위치 / "../" = �
 const Comment = require("../schemas/comment"); 
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
 const res = require("express/lib/response");
-const authMiddleware = require("../routes/auth-middleware");
 const CryptoJS = require("crypto-js");
-
+//token key 보안처리
+const fs = require("fs");
 
 router.get("/", (req, res) => {
     res.send("this is router page");
@@ -37,6 +37,34 @@ router.get('/modifyComment', async(req, res) => {
   res.render('modifyComment');
 })
 
+//댓글 수정 페이지 연결 
+router.get('/socket.io', async(req, res) => {
+  res.render('socket.io');
+})
+
+
+
+//multer-s3 미들웨어 연결
+require("dotenv").config();
+const authMiddleware = require("../middlewares/auth-middleware");
+
+const path = require("path");
+let AWS = require("aws-sdk");
+AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
+let s3 = new AWS.S3();
+let multer = require("multer");
+let multerS3 = require('multer-s3');
+let upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: "mandublog",
+        key: function (req, file, cb) {
+             let extension = path.extname(file.originalname);
+             cb(null, Date.now().toString() + extension)
+        },
+        acl: 'public-read-write',
+    })
+})
 
 
 
@@ -69,10 +97,16 @@ router.get("/blogList", async (req, res, next) => {
 
 
 // 게시글 작성 페이지 //저장됌 
-router.post('/blogList', authMiddleware, async (req, res) => {
+router.post(
+  '/blogList', 
+  authMiddleware, 
+  upload.single("imageUrl"), 
+  async (req, res) => {
   //작성한 정보 가져옴
   const { subject, nick, password_write, content } = req.body;
-  //console.log(borderDate, subject, nick, password_write, content); // ok
+  const imageUrl = req.file.location;
+  console.log("req.file: ", req.file); //ok
+  console.log( subject, nick, password_write, content, imageUrl); // ok
 
 // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
   const { user } = res.locals 
@@ -85,19 +119,36 @@ router.post('/blogList', authMiddleware, async (req, res) => {
   moment.tz.setDefault("Asia/Seoul"); 
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
 
-    await Blog.create({ NowDate, subject, nick, password_write, content, UserId });
-  
-  res.send({ result: "success" });
+   try {
+    const BlogList = await Blog.create({ 
+      NowDate, 
+      subject, 
+      nick, 
+      password_write, 
+      content, 
+      UserId, 
+      imageUrl
+    });
+   res.send({ result: "success", BlogList });
+  }catch{
+    res.status(400).send({ msg: "게시글이 작성되지 않았습니다." });
+  }
+
 });
 
 
 
 
 // 수정 페이지
-router.patch("/blogList/:PostId", authMiddleware, async (req, res) => {
- 
+router.patch(
+  "/blogList/:PostId", 
+  upload.single("imageUrl"),
+  authMiddleware, 
+  async (req, res) => {
+
   const { PostId } = req.params;
   const { nick, subject, content } = req.body;
+  const imageUrl = req.file.location;
   //console.log(userId) //ok 
 
   //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기. 
@@ -105,30 +156,72 @@ router.patch("/blogList/:PostId", authMiddleware, async (req, res) => {
     res.status(401).send();  //401 : 인증실패
     return;
   }
-
-    await Blog.updateOne({ _id : PostId }, { $set: { nick, subject, content } });
-  
+  try{
+    const video = await Blog.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
+    const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
+    const delFileName = url[url.length - 1];
+    s3.deleteObject(
+      {
+        Bucket: "mandublog",
+        Key: delFileName,
+      },
+      (err, data) => {
+        if (err) {
+          throw err;
+        }
+      }
+    );
+    await Blog.updateOne(
+      { _id : PostId }, { $set: { nick, subject, content ,imageUrl} 
+    });
   res.send({ result: "success" });
+  }catch{
+    res.status(400).send({ msg: "게시글이 수정되지 않았습니다." });
+  }
 })
 
 
 
 
 // 게시글 삭제 
-router.delete("/blogList/:PostId", authMiddleware, async (req, res) => {
-  const { PostId } = req.params;
-  const {user} = res.locals;
+router.delete(
+  "/blogList/:PostId", 
+  authMiddleware, 
+  async (req, res) => {
 
+  const { PostId } = req.params;
+  const video = await Blog.find({ _id : postId })  // 현재 URL에 전달된 id값을 받아서 db찾음
+  const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
+  const delFileName = url[url.length - 1];
+
+  try {
     await Blog.deleteOne({ _id : PostId });
-  
-  res.send({ result: "success" });
+    s3.deleteObject(
+      {
+        Bucket: "mandublog",
+        Key: delFileName,
+      },
+      (err, data) => {
+        if (err) {
+          throw err;
+        }
+      }
+    );
+    res.send({ result: "success" });
+  }catch{
+    res.status(400).send({msg :"게시글이 삭제되지 않았습니다."});
+  }
 });
 
 
 
 
 // 댓글 >> DB로 올리기 (댓글작성)
-router.post("/postingComment", authMiddleware, async (req, res) => {
+router.post(
+  "/postingComment", 
+  authMiddleware, 
+  async (req, res) => {
+
   const { comment, PostId } = req.body
   //console.log(comment, PostId); //ok
   if (!comment.length) {
@@ -158,14 +251,19 @@ router.post("/postingComment", authMiddleware, async (req, res) => {
      }
  
    res.json({ msg: "댓글 등록이 완료되었습니다!" })
-   await Comment.create({ NowDate, comment, CommentId, PostId, UserId });
+   await Comment.create(
+     { NowDate, comment, CommentId, PostId, UserId }
+     );
  })
 
 
 
 
 // DB >> 댓글 보여주기
-router.get("/lookupComment/:PostId", authMiddleware, async (req, res) => {
+router.get(
+  "/lookupComment/:PostId", 
+  authMiddleware, 
+  async (req, res) => {
   //주소에 PostId를 파라미터값으로 가져옴
   const { PostId }  = req.params;
   const { user } = res.locals;
@@ -189,7 +287,9 @@ router.get("/updateCommentData", async (req, res) => {
  // console.log(Comment)   //ok
 //console.log(user);
 
-  const Comment_info = await Comment.find({$and: [{PostId, CommentId}] });
+  const Comment_info = await Comment.find(
+    {$and: [{PostId, CommentId}] 
+  });
   console.log(Comment_info) //ok
 
   res.json(Comment_info);
@@ -198,7 +298,10 @@ router.get("/updateCommentData", async (req, res) => {
 
 
 // 댓글 수정하기
-router.post("/updateComment", authMiddleware, async (req, res) => {
+router.post(
+  "/updateComment", 
+  authMiddleware, 
+  async (req, res) => {
   const { CommentId, PostId, comment } = req.body
 
   if (!comment.length) {
@@ -213,7 +316,9 @@ router.post("/updateComment", authMiddleware, async (req, res) => {
   moment.tz.setDefault("Asia/Seoul"); 
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
 
-  await Comment.updateOne({ CommentId }, { $set: { comment, NowDate} } )
+  await Comment.updateOne(
+    { CommentId }, {$set: { comment, NowDate}} 
+    )
   res.json({msg: "댓글 수정이 완료되었습니다."})
 
 });
@@ -231,7 +336,9 @@ router.post("/deleteComment", async (req, res) => {
   const NowDate = String(moment().format('YYYY-MM-DD HH:mm:ss')); 
 
   // CommentId와 PostId를 기준으로 Data 받아오기
-  const exist_PostId_CommentId = await Comment.find({$and: [{PostId, id_ : CommentId}] });
+  const exist_PostId_CommentId = await Comment.find(
+    {$and: [{PostId, id_ : CommentId}] 
+  });
   
   // PostId와 Pw가 일치하는 Data가 없을경우
   if (exist_PostId_CommentId.length === 0) {

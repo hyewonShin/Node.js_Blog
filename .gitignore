@@ -1,1 +1,4 @@
+/node_modules
 /mini_key.pem
+/.env
+/config

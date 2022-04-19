@@ -4,8 +4,8 @@ const User = require("../schemas/user"); // "./" = 현재 내 위치 / "../" = �
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
 const jwt = require("jsonwebtoken");
 const res = require("express/lib/response");
-const authMiddleware = require("../routes/auth-middleware");
-
+const authMiddleware = require("../middlewares/auth-middleware");
+require("dotenv").config();
 
 //회원가입 페이지 연결 
 router.get('/sign_up', async (req, res) => {
@@ -93,7 +93,7 @@ router.post("/auth", async (req, res) => {
         );
         return;
     }
-    const token = jwt.sign({ userId: user.userId }, "seceret_my_key");
+    const token = jwt.sign({ userId: user.userId }, process.env.key);
     //응답값으로 클라에게 토큰 생성해서 보내줌 
     res.send({token});
 });

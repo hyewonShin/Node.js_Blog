@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken")  //jwt 모듈 불러오기 
 const User = require("../schemas/user")
-
+const fs = require("fs");
+require("dotenv").config();
 
 module.exports = (req, res, next) => {
-
     try {
         const {authorization} = req.headers;
         const [tokenType, tokenValue] = authorization.split(' ');
@@ -14,13 +14,12 @@ module.exports = (req, res, next) => {
             });
             return;
         }
-        const {userId} = jwt.verify(tokenValue, "seceret_my_key");
+        const {userId} = jwt.verify(tokenValue, process.env.key);
         //console.log(userId)
-        User.findById(userId)
+        User.findOne({ userId })
             .then((user) => {
-              //  console.log(user)
-                res.locals.user = user;
-                next();
+             res.locals.user = user;
+             next();
             });
     } catch (error) {
         res.status(401).send({
@@ -28,7 +27,6 @@ module.exports = (req, res, next) => {
         });
         return;
     }
-
 };
 
 

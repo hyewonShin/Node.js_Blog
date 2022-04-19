@@ -44,6 +44,7 @@
         let NowDate = blogList["NowDate"]
         let nick = blogList["nick"]
         let content = blogList["content"]
+        let imageUrl = blogList["imageUrl"]
 
         let temp_html = `<h1>글조회 페이지</h1>
                             <div>
@@ -51,6 +52,7 @@
                               <h5>작성시간: ${NowDate}<h5>
                               <h5>작성자명: ${nick}<h5>
                               <h5>글내용: ${content}<h5>
+                              <h5>이미지: ${imageUrl}<h5>
                             </div>`
         $('#detailAppend').append(temp_html)
 
@@ -128,8 +130,7 @@
       success: function(response) {
 
        let tokenObject = response["user"]
-      
-
+    
        let raw = response['sorted_total_ls'] //sorted_total_ls
        console.log(raw)   
         for (let i = 0; i < raw.length; i++) {
@@ -137,8 +138,6 @@
           let comment = raw[i]['comment'];
           let CommentId = raw[i]['CommentId']
           let NowDate = raw[i]['NowDate'];       
-        
-               
 
           if(UserId === tokenObject.id) {
             let temp_html = `

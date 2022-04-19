@@ -1,11 +1,15 @@
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const jwt = require("jsonwebtoken"); //jwt 모듈 불러오기 
 //const cookieParser = require('cookie-parser')
 
+
+
+require("dotenv").config();
 // 포트 연결 
 const connect = require("./schemas");  ///schemas의 index.js
-const port = 3000;
+const port = 4000;
 connect();
 
 // ejs 설정 
@@ -15,8 +19,8 @@ app.set('views', './views');
 
 
 //GET이라는 HTTP메서드로 아래 경로로 요청이 들어왔다.(app.get)
-app.get('/', (req, res) => {
-  res.send("this is 루트 page");
+app.get('/', function(req, res){
+	res.render('login');
 });
 
 
@@ -52,7 +56,7 @@ app.use(cors());
 
 
 
-// 서버구동 
+//서버구동 
 app.listen(port, () => {
     console.log(port, '포트로 서버가 열렸어요!');
   });
@@ -77,9 +81,3 @@ app.listen(port, () => {
 // 4) 글수정 페이지 /modify
 // - 수정 유효성검사 함수 modify_validation()
 // - 수정함수 modify()
-
-
-
-
-
-

@@ -28,6 +28,9 @@ const blogSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    imageUrl: {
+        type: String,
+      },
 });
 blogSchema.virtual("PostId").get(function () {
     return this._id.toHexString();

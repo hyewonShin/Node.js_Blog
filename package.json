@@ -1,15 +1,41 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.1116.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
+    "errorhandler": "^1.5.1",
     "express": "^4.17.3",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "monent": "^0.0.2-security",
-    "mongoose": "^6.2.8"
-  }
+    "mongoose": "^6.2.8",
+    "multer": "^1.4.4",
+    "multer-s3": "^2.10.0",
+    "socket.io": "^1.7.4",
+    "socketio": "^1.0.0"
+  },
+  "name": "node.js_blog",
+  "description": "1. 회원 가입 페이지\r     - 회원가입 버튼을 클릭하기\r     - 닉네임, 비밀번호, 비밀번호 확인을 입력하기 \r     - 닉네임은 `최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)`로 구성하기\r     - 비밀번호는 `최소 4자 이상이며, 닉네임과 같은 값이 포함된 경우 회원가입에 실패`로 만들기\r     - 비밀번호 확인은 비밀번호와 정확하게 일치하기 \r     - 데이터베이스에 존재하는 닉네임을 입력한 채 회원가입 버튼을 누른 경우 \"중복된 닉네임입니다.\" 라는 에러메세지를 프론트엔드에서 보여주기\r     - 회원가입 버튼을 누르고 에러메세지가 발생하지 않는다면 `로그인 페이지`로 이동시키기",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyewonShin/Node.js_blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hyewonShin/Node.js_blog/issues"
+  },
+  "homepage": "https://github.com/hyewonShin/Node.js_blog#readme",
+  "devDependencies": {}
 }
