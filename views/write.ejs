@@ -69,6 +69,7 @@
   }
 </script>
 <body>
+  <!-- <form action="/blog/blogList" method="post" enctype="multipart/form-data"> -->
   <h1>글작성 페이지</h1>
   <label>글 제목</label>
     <input type="text" id="subject" name="subject"></br>
@@ -78,9 +79,10 @@
     <input type="text" id="password_write" name="password_write"></br>
   <label>작성 내용</label>
     <input type="textarea" id="content" name="content"></br>
-    <label>이미지 업로드</label>
-    <input class="form-control" enctype="multipart/form-data" id="imageUrl" type="file" name="imageUrl" accept="image/png, image/gif, image/jpeg"></br>
+  <label>이미지 업로드</label>
+    <input class="form-control" id="imageUrl" type="file" name="imageUrl" accept="image/png, image/gif, image/jpeg"></br>
   <button onclick="post_write();">확인</button>
+    <!-- </form> -->
   <button type="button" class="btn btn-secondary" onclick="location.href='/blog/list'">취소</button>
 </body>
 </html>

@@ -37,7 +37,7 @@ io.on('connection', (socket) => {   //연결이 들어오면 실행되는 이벤
 require("dotenv").config();
 // 포트 연결 
 const connect = require("./schemas");  ///schemas의 index.js
-const port = 4000;
+const port = 3000;
 connect();
 
 

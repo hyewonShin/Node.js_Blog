@@ -37,11 +37,6 @@ router.get('/modifyComment', async(req, res) => {
   res.render('modifyComment');
 })
 
-//댓글 수정 페이지 연결 
-router.get('/socket.io', async(req, res) => {
-  res.render('socket.io');
-})
-
 
 
 //multer-s3 미들웨어 연결

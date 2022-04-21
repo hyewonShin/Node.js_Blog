@@ -4,6 +4,9 @@ const User = require("../schemas/user"); // "./" = 현재 내 위치 / "../" = �
 const { send } = require("express/lib/response"); //응답해주는 역할을 하는 library
 const jwt = require("jsonwebtoken");
 const res = require("express/lib/response");
+const CryptoJS = require("crypto-js");
+//token key 보안처리
+const fs = require("fs");
 const authMiddleware = require("../middlewares/auth-middleware");
 require("dotenv").config();
 
@@ -23,12 +26,15 @@ router.get('/login', (req, res) => {
 //회원가입
 router.post("/users", async (req, res) => {
     //회원가입창(프런트앤드)에서 받아오는 값 
-    const { id, password, password2 } = req.body;
+    const { 
+        id, 
+        password, 
+        password2 
+    } = req.body;
     //console.log(id, password, password2); //값 넘어옴
     //아이디는 `최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)`로 구성하기
     const re_id = /^[a-zA-Z0-9]{3,10}$/;
     const re_password = /^[a-zA-Z0-9]{4,30}$/;
-
 
     if (password !== password2) {
         res.status(412).send({ //400 status 코드 보내기 
@@ -66,8 +72,16 @@ router.post("/users", async (req, res) => {
         });
         return;
     }
+
+    const hashPassword = CryptoJS.AES.encrypt(
+        password,
+        process.env.keyDecrypt
+      ).toString();
+
+
+
     //이전에 가입한 정보가 없다면, user변수에 저장(회원가입)
-    const user = new User({ id, password });
+    const user = new User({ id, hashPassword });
     res.json({ msg: "회원가입이 완료 되었습니다." });
     await user.save(); //user변수 db에 저장
 
@@ -84,7 +98,7 @@ router.post("/auth", async (req, res) => {
 
     //exec() 메소드는 일치 검색을 실행합니다. 결과 배열 또는 null 을 반환합니다 .
     // 클라가 입력한 정보로 DB조회 
-    const user = await User.findOne({ id, password }).exec();
+    const user = await User.findOne({ id }).exec();
     // console.log(user); // 값 들어옴 
 
     if (!user) {  //사용자가 없다면 
@@ -93,9 +107,27 @@ router.post("/auth", async (req, res) => {
         );
         return;
     }
-    const token = jwt.sign({ userId: user.userId }, process.env.key);
+
+    const existPw = user.hashPassword;
+    console.log(existPw);
+    const decryptedPsw = CryptoJS.AES.decrypt(existPw, process.env.keyDecrypt);
+    const originPw = decryptedPsw.toString(CryptoJS.enc.Utf8);
+
+    if(originPw != password) {
+        res.status(400).send({ errorMessage: "비밀번호를 확인해 주세요." });
+        return;
+    }
+
+    const token = jwt.sign({ 
+        userId: user.userId 
+    }, 
+    process.env.key
+    );
     //응답값으로 클라에게 토큰 생성해서 보내줌 
-    res.send({token});
+    res.status(201).send({
+        msg: "로그인 성공",
+        token,
+      });
 });
 
 

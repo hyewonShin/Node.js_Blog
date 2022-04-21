@@ -6,9 +6,13 @@ const userSchema = mongoose.Schema({
         required: true, //필수적이어야 된다. 
         unique: true,  //id이기 때문에 유니크(유일)해야된다.
     },
-    password: {
+    // password: {
+    //     type: String,
+    //     required: true, //필수적이어야 된다. 
+    // },
+    hashPassword: {
         type: String,
-        required: true, //필수적이어야 된다. 
+        required: true,
     },
 });
 userSchema.virtual("userId").get(function () {
